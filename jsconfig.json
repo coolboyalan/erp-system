@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#root/*": ["src/*"],
+      "#libs/*": ["src/libs/*"],
+      "#utils/*": ["src/utils/*"],
+      "#routes/*": ["src/routes/*"],
+      "#controllers/*": ["src/controllers/*"],
+      "#services/*": ["src/services/*"],
+      "#configs/*": ["src/configs/*"],
+      "#models/*": ["src/models/*"],
+      "#middlewares/*": ["src/middlewares/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
