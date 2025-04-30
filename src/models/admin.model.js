@@ -1,3 +1,4 @@
+import { hash } from "bcryptjs";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
 
@@ -17,6 +18,9 @@ Admin.initialize(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    permissions: {
+      type: DataTypes.JSON,
     },
   },
   {

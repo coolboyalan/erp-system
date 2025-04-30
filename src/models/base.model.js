@@ -1,5 +1,6 @@
 import { Model } from "sequelize";
 import httpStatus from "http-status";
+import AppError from "#utils/appError";
 import sequelize from "#configs/database";
 
 class BaseModel extends Model {
@@ -117,11 +118,11 @@ class BaseModel extends Model {
       return data;
     }
     if (!data) {
-      throw {
+      throw new AppError({
         status: false,
         message: `${this.name} not found with id ${id}`,
         httpStatus: httpStatus.BAD_REQUEST,
-      };
+      });
     }
 
     return data;
@@ -169,11 +170,11 @@ class BaseModel extends Model {
     const doc = await this.findByPk(id);
 
     if (updatedCount !== 1) {
-      throw {
+      throw new AppError({
         status: false,
         httpStatus: httpStatus.NOT_FOUND,
         message: `${this.name} not found`,
-      };
+      });
     }
     return updatedRecord;
   }
@@ -201,22 +202,22 @@ class BaseModel extends Model {
       },
     );
     if (updatedCount !== 1 || !updatedRecord || !updatedRecord.length) {
-      throw {
+      throw new AppError({
         status: false,
         httpStatus: httpStatus.NOT_FOUND,
         message: `${this.name} not found`,
-      };
+      });
     }
     return updatedRecord;
   }
 
   static idChecker(id) {
     if (!id || isNaN(id)) {
-      throw {
+      throw new AppError({
         status: false,
         httpStatus: httpStatus.NOT_FOUND,
         message: `Invalid or missing ${this.name} id`,
-      };
+      });
     }
   }
 
