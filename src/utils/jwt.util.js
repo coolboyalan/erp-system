@@ -16,7 +16,7 @@ export function verifyToken(data) {
   }
 }
 
-export function createToken(payload, options) {
+export function createToken(payload, options = {}) {
   try {
     const { secret } = options;
     const token = jwt.sign(payload, secret ?? env.JWT_SECRET, options);
