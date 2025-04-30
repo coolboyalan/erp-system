@@ -11,9 +11,16 @@ const server = express();
 
 // Ensure the database connection is established before starting the server
 await sequelize.authenticate();
+await sequelize.sync();
 
 // Request logging middleware
 server.use(morgan(logger));
+
+// Middleware to parse incoming JSON request bodies
+server.use(express.json()); // Express's built-in JSON parser
+
+// Middleware to parse URL-encoded data (like form submissions)
+server.use(express.urlencoded({ extended: true })); // This will handle x-www-form-urlencoded
 
 // Session middleware should come before routes
 server.use(requestSessionMiddleware());

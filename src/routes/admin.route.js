@@ -1,8 +1,11 @@
 import express from "express";
 import asyncHandler from "#utils/asyncHandler";
 import AdminController from "#controllers/admin";
+import { authentication } from "#middlewares/authentication";
 
 const router = express.Router();
+
+router.use(authentication);
 
 router
   .route("/:id?")

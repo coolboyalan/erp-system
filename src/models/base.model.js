@@ -1,4 +1,5 @@
 import { Model } from "sequelize";
+import httpStatus from "http-status";
 import sequelize from "#configs/database";
 
 class BaseModel extends Model {
@@ -34,6 +35,10 @@ class BaseModel extends Model {
         paranoid: true,
       },
     );
+  }
+
+  static updatedName() {
+    return this.name;
   }
 
   static modifyModelDefinition(modelDefinition) {
@@ -209,7 +214,7 @@ class BaseModel extends Model {
     if (!id || isNaN(id)) {
       throw {
         status: false,
-        httpStatus: httpStatus.BAD_REQUEST,
+        httpStatus: httpStatus.NOT_FOUND,
         message: `Invalid or missing ${this.name} id`,
       };
     }
