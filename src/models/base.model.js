@@ -1,4 +1,5 @@
 import { Model } from "sequelize";
+import sequelize from "#configs/database";
 
 class BaseModel extends Model {
   static excludedBranchModels = ["Branch", "City", "State", "Country", "Auth"];

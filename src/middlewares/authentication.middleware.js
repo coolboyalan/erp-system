@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
-import { session } from "#middlewares/requestSession";
 import { verifyToken } from "#utils/jwt";
+import { session } from "#middlewares/requestSession";
 
 export async function authentication(req, res, next) {
   try {
@@ -16,7 +16,7 @@ export async function authentication(req, res, next) {
 
     token = token.split(" ")[1];
 
-    const payload = verifyToken(token);
+    const payload = verifyToken({ token });
 
     session.set("userType", payload.userType);
     session.set("payload", payload);

@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import { sendResponse } from "#utils/response";
 
-class Controller {
+class BaseController {
   static Service = null;
 
   static async get(req, res, next) {
@@ -48,4 +48,4 @@ class Controller {
   }
 }
 
-export default Controller;
+export default BaseController;

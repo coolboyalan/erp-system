@@ -1,4 +1,4 @@
-class Service {
+class BaseService {
   static Model = null;
 
   static async get(id, filters) {
@@ -29,4 +29,4 @@ class Service {
   }
 }
 
-export default Service;
+export default BaseService;

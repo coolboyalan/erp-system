@@ -4,20 +4,31 @@ import router from "#routes/index";
 import logger from "#configs/logger";
 import httpStatus from "http-status";
 import sequelize from "#configs/database";
+import { globalErrorHandler } from "#utils/error";
 import requestSessionMiddleware from "#middlewares/requestSession";
 
 const server = express();
 
+// Ensure the database connection is established before starting the server
 await sequelize.authenticate();
 
+// Request logging middleware
 server.use(morgan(logger));
+
+// Session middleware should come before routes
 server.use(requestSessionMiddleware());
+
+// Main routes
 server.use("/", router);
 
-server.use((req, res) => {
+// 404 Handler (Path Not Found) – for undefined routes
+server.use((_req, res) => {
   res
     .status(httpStatus.NOT_FOUND)
     .json({ status: false, message: "Path not found" });
 });
+
+// Global Error Handler – Catch all errors
+server.use(globalErrorHandler);
 
 export default server;
