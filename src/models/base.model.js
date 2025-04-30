@@ -24,14 +24,6 @@ class BaseModel extends Model {
         //  allowNull: true,
         //  filterable: true,
         //},
-        createdAt: {
-          type: DataTypes.DATE,
-          filterable: true, // If you want createdAt to be filterable
-        },
-        updatedAt: {
-          type: DataTypes.DATE,
-          filterable: true, // If you want updatedAt to be filterable
-        },
       },
       {
         hooks: {},

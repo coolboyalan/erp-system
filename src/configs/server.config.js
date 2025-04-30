@@ -3,9 +3,12 @@ import express from "express";
 import router from "#routes/index";
 import logger from "#configs/logger";
 import httpStatus from "http-status";
+import sequelize from "#configs/database";
 import requestSessionMiddleware from "#middlewares/requestSession";
 
 const server = express();
+
+await sequelize.authenticate();
 
 server.use(morgan(logger));
 server.use(requestSessionMiddleware());
