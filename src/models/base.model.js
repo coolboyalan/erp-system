@@ -140,6 +140,7 @@ class BaseModel extends Model {
     const files = session.get("files");
 
     if (files.length) {
+      return console.log(this);
     }
 
     if (!transaction) {

@@ -22,6 +22,10 @@ Admin.initialize(
     permissions: {
       type: DataTypes.JSON,
     },
+    profile: {
+      type: DataTypes.STRING(1000),
+      file: true,
+    },
   },
   {
     hooks: {

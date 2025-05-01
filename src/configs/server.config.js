@@ -6,6 +6,7 @@ import httpStatus from "http-status";
 import sequelize from "#configs/database";
 import { globalErrorHandler } from "#utils/error";
 import requestSessionMiddleware from "#middlewares/requestSession";
+import multer from "multer";
 
 const server = express();
 
@@ -17,6 +18,7 @@ await sequelize.sync();
 server.use(morgan(logger));
 
 // Middleware to parse incoming JSON request bodies
+server.use(multer().any());
 server.use(express.json()); // Express's built-in JSON parser
 
 // Middleware to parse URL-encoded data (like form submissions)
@@ -26,7 +28,7 @@ server.use(express.urlencoded({ extended: true })); // This will handle x-www-fo
 server.use(requestSessionMiddleware());
 
 // Main routes
-server.use("/", router);
+server.use("/api", router);
 
 // 404 Handler (Path Not Found) – for undefined routes
 server.use((_req, res) => {

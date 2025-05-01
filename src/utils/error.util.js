@@ -18,8 +18,6 @@ import { session } from "#middlewares/requestSession";
  * @return {Object} - The response object with appropriate error handling
  */
 export const globalErrorHandler = async (error, req, res, next) => {
-  console.error("Error:", error);
-
   const transaction = await session.get("transaction");
   transaction ? await transaction.rollback() : null;
 

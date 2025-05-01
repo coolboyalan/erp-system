@@ -1,3 +1,4 @@
+import sequelize from "#configs/database";
 import { AsyncLocalStorage } from "node:async_hooks";
 
 class Storage {
@@ -30,6 +31,12 @@ export const session = new Storage();
 
 export default function () {
   return function (req, res, next) {
-    session.run(() => next());
+    session.run(async () => {
+      session.set("files", req.files ?? []);
+      if (req.method !== "GET" && req.method !== "OPTIONS") {
+        session.set("transaction", await sequelize.transaction());
+      }
+      next();
+    });
   };
 }
