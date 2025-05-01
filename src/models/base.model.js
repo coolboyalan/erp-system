@@ -2,6 +2,7 @@ import { Model } from "sequelize";
 import httpStatus from "http-status";
 import AppError from "#utils/appError";
 import sequelize from "#configs/database";
+import { session } from "#middlewares/requestSession";
 
 class BaseModel extends Model {
   static excludedBranchModels = ["Branch", "City", "State", "Country", "Auth"];
@@ -135,6 +136,19 @@ class BaseModel extends Model {
 
   async save() {
     const transaction = session.get("transaction");
+
+    const files = session.get("files");
+
+    if (files.length) {
+    }
+
+    if (!transaction) {
+      throw new AppError({
+        status: false,
+        message: "Failed to fetch transaction",
+        httpStatus: httpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
     await super.save({ transaction });
     return this;
   }
