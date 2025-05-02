@@ -1,20 +1,4 @@
 {
-  "name": "nodejs-express-sql",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/coolboyalan/nodejs-express-sql.git"
-  },
-  "keywords": [],
-  "author": "Deepak Singh",
-  "license": "ISC",
-  "type": "module",
-  "bugs": {
-    "url": "https://github.com/coolboyalan/nodejs-express-sql/issues"
-  },
-  "homepage": "https://github.com/coolboyalan/nodejs-express-sql#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "node src/scripts/generateModule.js"
