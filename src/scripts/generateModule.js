@@ -8,11 +8,12 @@ const __dirname = dirname(__filename);
 
 // Function to capitalize the first letter of a string
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+const camelCase = (str) => str.charAt(0).toLowerCase() + str.slice(1);
 
 // Function to generate the controller file content
 const generateControllerContent = (
   modelName,
-) => `import ${modelName}Service from "#services/${modelName.toLowerCase()}";
+) => `import ${modelName}Service from "#services/${camelCase(modelName)}";
 import BaseController from "#controllers/base";
 
 class ${modelName}Controller extends BaseController {
@@ -47,7 +48,7 @@ export default ${modelName};
 // Function to generate the router file content
 const generateRouterContent = (modelName) => `import express from "express";
 import asyncHandler from "#utils/asyncHandler";
-import ${modelName}Controller from "#controllers/${modelName.toLowerCase()}";
+import ${modelName}Controller from "#controllers/${camelCase(modelName)}";
 import { authentication } from "#middlewares/authentication";
 
 const router = express.Router();
@@ -67,7 +68,7 @@ export default router;
 // Function to generate the service file content
 const generateServiceContent = (
   modelName,
-) => `import ${modelName} from "#models/${modelName.toLowerCase()}";
+) => `import ${modelName} from "#models/${camelCase(modelName)}";
 import BaseService from "#services/base";
 
 class ${modelName}Service extends BaseService {
@@ -104,14 +105,11 @@ const generateFiles = async (modelName) => {
     // Define file paths
     const controllerFile = join(
       controllersDir,
-      `${modelName.toLowerCase()}.controller.js`,
+      `${camelCase(modelName)}.controller.js`,
     );
-    const routerFile = join(routersDir, `${modelName.toLowerCase()}.route.js`);
-    const serviceFile = join(
-      servicesDir,
-      `${modelName.toLowerCase()}.service.js`,
-    );
-    const modelFile = join(modelsDir, `${modelName.toLowerCase()}.model.js`);
+    const routerFile = join(routersDir, `${camelCase(modelName)}.route.js`);
+    const serviceFile = join(servicesDir, `${camelCase(modelName)}.service.js`);
+    const modelFile = join(modelsDir, `${camelCase(modelName)}.model.js`);
 
     console.log("Generating files:");
     console.log(`- ${controllerFile}`);
@@ -160,14 +158,11 @@ const deleteFiles = async (modelName) => {
     // Define file paths
     const controllerFile = join(
       controllersDir,
-      `${modelName.toLowerCase()}.controller.js`,
+      `${camelCase(modelName)}.controller.js`,
     );
-    const routerFile = join(routersDir, `${modelName.toLowerCase()}.route.js`);
-    const serviceFile = join(
-      servicesDir,
-      `${modelName.toLowerCase()}.service.js`,
-    );
-    const modelFile = join(modelsDir, `${modelName.toLowerCase()}.model.js`);
+    const routerFile = join(routersDir, `${camelCase(modelName)}.route.js`);
+    const serviceFile = join(servicesDir, `${camelCase(modelName)}.service.js`);
+    const modelFile = join(modelsDir, `${camelCase(modelName)}.model.js`);
 
     // List of files to delete
     const files = [
