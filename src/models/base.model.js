@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import AppError from "#utils/appError";
 import sequelize from "#configs/database";
 import { session } from "#middlewares/requestSession";
+import { uploadFile } from "#configs/awsS3";
 
 class BaseModel extends Model {
   static excludedBranchModels = ["Branch", "City", "State", "Country", "Auth"];
@@ -66,6 +67,8 @@ class BaseModel extends Model {
       page = 1,
       limit = 10,
       order = [["createdAt", "DESC"]],
+      sortKey,
+      sortDir,
     } = filters;
 
     const attributes = this.rawAttributes;
@@ -99,6 +102,8 @@ class BaseModel extends Model {
       limit,
       offset,
     });
+
+    //WARN: Sorting and sort direction missing
 
     return {
       result: rows,
@@ -138,9 +143,24 @@ class BaseModel extends Model {
     const transaction = session.get("transaction");
 
     const files = session.get("files");
-
     if (files.length) {
-      return console.log(this);
+      const attributes = this.constructor.rawAttributes;
+
+      const filesPromises = [];
+      files.forEach((file) => {
+        if (attributes[file.fieldname] && attributes[file.fieldname].file) {
+          const fileName = `${this.constructor.updatedName()}/${file.fieldname}/${this.dataValues.createdAt}`;
+          filesPromises.push(uploadFile(fileName, file.buffer, file.mimetype));
+        }
+      });
+
+      if (filesPromises.length) {
+        try {
+          const fileLinks = await Promise.all(filesPromises);
+        } catch (err) {
+          //WARN: Handle file upload revert here
+        }
+      }
     }
 
     if (!transaction) {
