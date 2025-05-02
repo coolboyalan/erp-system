@@ -41,9 +41,9 @@
     "url": "git+https://github.com/coolboyalan/erp-system.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Deepak Singh",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/coolboyalan/erp-system/issues"
   },
