@@ -1,6 +1,6 @@
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
-import ProductCategory from "./productCategory.model";
+import ProductCategory from "#models/productCategory";
 
 class Product extends BaseModel {
   static typeEnumArr = ["Finished", "Semi-Finished"];
