@@ -12,8 +12,8 @@ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 // Function to generate the controller file content
 const generateControllerContent = (
   modelName,
-) => `import ${modelName}Service from "#services/${modelName.toLowerCase()}.service.js";
-import BaseController from "#controllers/base.js";
+) => `import ${modelName}Service from "#services/${modelName.toLowerCase()}";
+import BaseController from "#controllers/base";
 
 class ${modelName}Controller extends BaseController {
   static Service = ${modelName}Service;
@@ -25,7 +25,7 @@ export default ${modelName}Controller;
 // Function to generate the model file content
 const generateModelContent = (
   modelName,
-) => `import BaseModel from "#models/base.js";
+) => `import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
 
 class ${modelName} extends BaseModel {}
@@ -46,9 +46,9 @@ export default ${modelName};
 
 // Function to generate the router file content
 const generateRouterContent = (modelName) => `import express from "express";
-import asyncHandler from "#utils/asyncHandler.js";
-import ${modelName}Controller from "#controllers/${modelName.toLowerCase()}.controller.js";
-import { authentication } from "#middlewares/authentication.js";
+import asyncHandler from "#utils/asyncHandler";
+import ${modelName}Controller from "#controllers/${modelName.toLowerCase()}";
+import { authentication } from "#middlewares/authentication";
 
 const router = express.Router();
 
@@ -67,8 +67,8 @@ export default router;
 // Function to generate the service file content
 const generateServiceContent = (
   modelName,
-) => `import ${modelName} from "#models/${modelName.toLowerCase()}.model.js";
-import BaseService from "#services/base.js";
+) => `import ${modelName} from "#models/${modelName.toLowerCase()}";
+import BaseService from "#services/base";
 
 class ${modelName}Service extends BaseService {
   static Model = ${modelName};
@@ -86,6 +86,12 @@ const generateFiles = async (modelName) => {
     const routersDir = join(srcDir, "routes");
     const servicesDir = join(srcDir, "services");
     const modelsDir = join(srcDir, "models");
+
+    console.log("Target directories:");
+    console.log(`- Controllers: ${controllersDir}`);
+    console.log(`- Routes: ${routersDir}`);
+    console.log(`- Services: ${servicesDir}`);
+    console.log(`- Models: ${modelsDir}`);
 
     // Ensure directories exist
     await Promise.all([
@@ -106,6 +112,12 @@ const generateFiles = async (modelName) => {
       `${modelName.toLowerCase()}.service.js`,
     );
     const modelFile = join(modelsDir, `${modelName.toLowerCase()}.model.js`);
+
+    console.log("Generating files:");
+    console.log(`- ${controllerFile}`);
+    console.log(`- ${routerFile}`);
+    console.log(`- ${serviceFile}`);
+    console.log(`- ${modelFile}`);
 
     // Generate and write files
     await Promise.all([
@@ -139,6 +151,12 @@ const deleteFiles = async (modelName) => {
     const servicesDir = join(srcDir, "services");
     const modelsDir = join(srcDir, "models");
 
+    console.log("Target directories for deletion:");
+    console.log(`- Controllers: ${controllersDir}`);
+    console.log(`- Routes: ${routersDir}`);
+    console.log(`- Services: ${servicesDir}`);
+    console.log(`- Models: ${modelsDir}`);
+
     // Define file paths
     const controllerFile = join(
       controllersDir,
@@ -159,24 +177,30 @@ const deleteFiles = async (modelName) => {
       { path: modelFile, name: "Model" },
     ];
 
-    // Check and delete files if they exist
+    console.log(`Attempting to delete files for ${modelName} module:`);
+    files.forEach((file) => console.log(`- ${file.name}: ${file.path}`));
+
+    // Check and delete files sequentially
     let deletedCount = 0;
-    const deletePromises = files.map(async ({ path, name }) => {
+    for (const { path, name } of files) {
       try {
-        await fs.access(path); // Check if file exists
+        // Check if file exists and is writable
+        await fs.access(path, fs.constants.F_OK | fs.constants.W_OK);
         await fs.unlink(path); // Delete the file
         console.log(`Deleted ${name}: ${path}`);
         deletedCount++;
       } catch (error) {
         if (error.code === "ENOENT") {
           console.log(`File not found, skipping ${name}: ${path}`);
+        } else if (error.code === "EACCES") {
+          console.error(
+            `Permission denied for ${name} (${path}): Ensure Node.js has write access`,
+          );
         } else {
           console.error(`Error deleting ${name} (${path}):`, error.message);
         }
       }
-    });
-
-    await Promise.all(deletePromises);
+    }
 
     if (deletedCount === 0) {
       console.log(`No files were found to delete for ${modelName} module.`);
@@ -193,7 +217,9 @@ const deleteFiles = async (modelName) => {
 
 // Command line argument handling
 const modelName = process.argv[2];
-const isDelete = process.argv[3] === "--delete" || process.argv[3] === "-d";
+const isDelete = process.argv[3] === "delete";
+
+console.log(process.argv);
 
 if (!modelName) {
   console.error("Please provide a model name. Usage:");
