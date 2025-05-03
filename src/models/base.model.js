@@ -144,12 +144,12 @@ class BaseModel extends Model {
     // Count Query
     const countQuery = `SELECT COUNT(*) AS count FROM "${tableName}" ${whereSQL}`;
 
-    const [results] = await this.sequelize.query(dataQuery, {
+    const result = await this.sequelize.query(dataQuery, {
       replacements,
       type: this.sequelize.QueryTypes.SELECT,
     });
 
-    let count = results.length;
+    let count = result.length;
     if (pagination !== "false") {
       const [countResult] = await this.sequelize.query(countQuery, {
         replacements,
@@ -159,7 +159,7 @@ class BaseModel extends Model {
     }
 
     return {
-      result: results,
+      result,
       ...(pagination !== "false"
         ? {
             pagination: {
