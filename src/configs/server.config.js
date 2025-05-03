@@ -1,3 +1,5 @@
+import cors from "cors";
+import multer from "multer";
 import morgan from "morgan";
 import express from "express";
 import router from "#routes/index";
@@ -6,7 +8,6 @@ import httpStatus from "http-status";
 import sequelize from "#configs/database";
 import { globalErrorHandler } from "#utils/error";
 import requestSessionMiddleware from "#middlewares/requestSession";
-import multer from "multer";
 
 const server = express();
 
