@@ -49,7 +49,7 @@ class BaseModel extends Model {
       acc[key] = {
         ...value,
         filterable: value.filterable ?? true,
-        searchable: value.searchable ?? false,
+        searchable: value.searchable ?? true,
         ...(modelDefinition[key]["references"]
           ? {
               references: modelDefinition[key]["references"],
@@ -95,8 +95,10 @@ class BaseModel extends Model {
         return;
 
       if (!attributes[key] || !attributes[key].filterable) {
-        throw new AppError(`Field "${key}" is not filterable`, {
+        throw new AppError({
           status: false,
+          message: `Field "${key}" is not filterable`,
+          httpStatus: httpStatus.BAD_REQUEST,
         });
       }
 
@@ -108,8 +110,10 @@ class BaseModel extends Model {
     // Validate searchKey if present
     if (search && searchKey) {
       if (!attributes[searchKey] || !attributes[searchKey].searchable) {
-        throw new AppError(`Field "${searchKey}" is not searchable`, {
+        throw new AppError({
           status: false,
+          message: `Field "${searchKey}" is not searchable`,
+          httpStatus: httpStatus.BAD_REQUEST,
         });
       }
 
