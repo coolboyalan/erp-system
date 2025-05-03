@@ -1,4 +1,6 @@
 import morgan from "morgan";
+import "#defaults/regionData";
+import multer from "multer";
 import express from "express";
 import router from "#routes/index";
 import logger from "#configs/logger";
@@ -6,7 +8,6 @@ import httpStatus from "http-status";
 import sequelize from "#configs/database";
 import { globalErrorHandler } from "#utils/error";
 import requestSessionMiddleware from "#middlewares/requestSession";
-import multer from "multer";
 
 const server = express();
 

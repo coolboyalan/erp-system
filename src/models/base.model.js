@@ -143,7 +143,7 @@ class BaseModel extends Model {
     const transaction = session.get("transaction");
 
     const files = session.get("files");
-    if (files.length) {
+    if (files?.length) {
       const attributes = this.constructor.rawAttributes;
 
       const filesPromises = [];

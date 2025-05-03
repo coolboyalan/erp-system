@@ -1,34 +1,34 @@
-import State from "#models/state";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
+import Warehouse from "#models/warehouse";
 
-class City extends BaseModel {}
+class Bin extends BaseModel {}
 
-City.initialize(
+Bin.initialize(
   {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
       //WARN: Unique constraint missing
     },
-    stateId: {
+    warehouseId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: State,
-        key: State.primaryKeyAttribute,
+        model: Warehouse,
+        key: Warehouse.primaryKeyAttribute,
       },
     },
   },
   {
     indexes: [
       {
-        name: "cityAndStateIndex",
+        name: "warehouseBinIndex",
         unique: true,
-        fields: ["name", "stateId"],
+        fields: ["name", "warehouseId"],
       },
     ],
   },
 );
 
-export default City;
+export default Bin;

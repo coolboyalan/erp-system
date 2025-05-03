@@ -10,6 +10,9 @@
       "#services/*": ["src/services/*.service.js"],
       "#configs/*": ["src/configs/*.config.js"],
       "#models/*": ["src/models/*.model.js"],
+	  "#defaults/*":[
+		  "src/defaults/*.default.js"
+	  ],
       "#middlewares/*": ["src/middlewares/*.middleware.js"]
     }
   },
