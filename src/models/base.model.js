@@ -64,54 +64,102 @@ class BaseModel extends Model {
   static async find(filters) {
     const {
       search = "",
+      searchKey = "",
       page = 1,
       limit = 10,
-      order = [["createdAt", "DESC"]],
       sortKey,
       sortDir,
       pagination,
+      ...restFilters // captures other filter keys
     } = filters;
 
+    const tableName = this.getTableName();
     const attributes = this.rawAttributes;
-    const where = {};
 
-    // Apply filtering based on filterable fields
-    Object.keys(filters).forEach((key) => {
-      if (attributes[key] && attributes[key].filterable) {
-        where[key] = filters[key];
+    const whereClauses = [];
+    const replacements = {};
+
+    // Validate and apply filterable fields
+    Object.keys(restFilters).forEach((key) => {
+      if (
+        [
+          "search",
+          "searchKey",
+          "page",
+          "limit",
+          "sortKey",
+          "sortDir",
+          "pagination",
+        ].includes(key)
+      )
+        return;
+
+      if (!attributes[key] || !attributes[key].filterable) {
+        throw new AppError(`Field "${key}" is not filterable`, {
+          status: false,
+        });
       }
+
+      const paramKey = `filter_${key}`;
+      whereClauses.push(`"${key}" = :${paramKey}`);
+      replacements[paramKey] = filters[key];
     });
 
-    // Apply search across searchable fields
-    if (search) {
-      const searchConditions = Object.keys(attributes)
-        .filter((key) => attributes[key].searchable)
-        .map((key) => ({ [key]: { [Op.iLike]: `%${search}%` } }));
-
-      if (searchConditions.length > 0) {
-        where[Op.or] = searchConditions;
+    // Validate searchKey if present
+    if (search && searchKey) {
+      if (!attributes[searchKey] || !attributes[searchKey].searchable) {
+        throw new AppError(`Field "${searchKey}" is not searchable`, {
+          status: false,
+        });
       }
+
+      const paramKey = `search_0`;
+      whereClauses.push(`"${searchKey}" ILIKE :${paramKey}`);
+      replacements[paramKey] = `%${search}%`;
     }
 
-    // Calculate pagination
+    // WHERE clause
+    const whereSQL = whereClauses.length
+      ? `WHERE ${whereClauses.join(" AND ")}`
+      : "";
+
+    // Sorting
+    const defaultOrder = [["createdAt", "DESC"]];
+    const sortColumn =
+      sortKey && attributes[sortKey]
+        ? `"${sortKey}"`
+        : `"${defaultOrder[0][0]}"`;
+    const sortDirection =
+      sortDir?.toUpperCase() === "ASC" ? "ASC" : defaultOrder[0][1];
+    const orderSQL = `ORDER BY ${sortColumn} ${sortDirection}`;
+
+    // Pagination
     const offset = (page - 1) * limit;
+    const limitSQL =
+      pagination !== "false" ? `LIMIT ${limit} OFFSET ${offset}` : "";
 
-    // Fetch data with pagination
-    const { count, rows } = await this.findAndCountAll(
-      pagination !== "false"
-        ? {
-            where,
-            order,
-            limit,
-            offset,
-          }
-        : { where, order },
-    );
+    // Data Query
+    const dataQuery = `SELECT * FROM "${tableName}" ${whereSQL} ${orderSQL} ${limitSQL}`;
 
-    //WARN: Sorting and sort direction missing
+    // Count Query
+    const countQuery = `SELECT COUNT(*) AS count FROM "${tableName}" ${whereSQL}`;
+
+    const [results] = await this.sequelize.query(dataQuery, {
+      replacements,
+      type: this.sequelize.QueryTypes.SELECT,
+    });
+
+    let count = results.length;
+    if (pagination !== "false") {
+      const [countResult] = await this.sequelize.query(countQuery, {
+        replacements,
+        type: this.sequelize.QueryTypes.SELECT,
+      });
+      count = parseInt(countResult.count, 10);
+    }
 
     return {
-      result: rows,
+      result: results,
       ...(pagination !== "false"
         ? {
             pagination: {
