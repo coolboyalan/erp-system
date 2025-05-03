@@ -46,7 +46,7 @@ User.initialize(
   {
     hooks: {
       async beforeCreate(instance) {
-        instance.password = await hash(instance.password);
+        instance.password = await hash(instance.password, 10);
       },
     },
   },

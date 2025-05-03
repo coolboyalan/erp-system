@@ -4,6 +4,7 @@ import State from "#models/state";
 import Country from "#models/country";
 import sequelize from "#configs/database";
 import { session } from "#middlewares/requestSession";
+import Admin from "#models/admin";
 
 const region = {
   "Andaman and Nicobar Islands": ["Port Blair"],
@@ -1257,7 +1258,9 @@ const region = {
 (async function addRegion() {
   session.run(async () => {
     try {
-      if (true) return;
+      const existing = await State.findAll();
+
+      if (existing.length) return;
 
       session.set("transaction", await sequelize.transaction());
 
@@ -1278,6 +1281,32 @@ const region = {
       console.log(err);
       const transaction = session.get("transaction");
       await transaction.rollback();
+      process.exit();
+    }
+  });
+})();
+
+(async function addAdmin() {
+  session.run(async () => {
+    try {
+      const admin = await Admin.findAll();
+      if (admin.length) return;
+
+      session.set("transaction", await sequelize.transaction());
+
+      const createdAdmin = await Admin.create({
+        name: "admin",
+        email: "johndoe@example.com",
+        password: "password",
+      });
+
+      const transaction = session.get("transaction");
+      await transaction.commit();
+    } catch (err) {
+      console.log(err);
+      const transaction = session.get("transaction");
+      await transaction.rollback();
+      process.exit();
     }
   });
 })();

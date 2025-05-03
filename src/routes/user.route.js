@@ -6,6 +6,10 @@ import { authentication } from "#middlewares/authentication";
 const router = express.Router();
 
 // router.use(authentication);
+//
+router
+  .route("/login")
+  .post(asyncHandler(UserController.login.bind(UserController)));
 
 router
   .route("/:id?")
