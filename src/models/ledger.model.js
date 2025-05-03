@@ -2,27 +2,35 @@ import User from "#models/user";
 import City from "#models/city";
 import State from "#models/state";
 import BaseModel from "#models/base";
-import { DataTypes } from "sequelize";
 import Country from "#models/country";
+import { DataTypes } from "sequelize";
 
-class Lead extends BaseModel {
-  static genderEnumArr = ["Male", "Female", "Other"];
-
-  static priorityEnumArr = ["Low", "Medium", "High"];
+class Ledger extends BaseModel {
+  static ledgerTypeEnumArr = ["Customer", "Supplier", "Both"];
 }
 
-Lead.initialize({
-  firstName: {
+Ledger.initialize({
+  companyName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  lastName: {
+  contactName: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  ledgerType: {
+    type: DataTypes.ENUM(Ledger.ledgerTypeEnumArr),
+    allowNull: false,
+  },
+  assignedSalesPerson: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: User.primaryKeyAttribute,
+    },
   },
   phone: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.INTEGER,
   },
   email: {
     type: DataTypes.STRING,
@@ -30,9 +38,30 @@ Lead.initialize({
       isEmail: true,
     },
   },
-  gender: {
-    type: DataTypes.ENUM(Lead.genderEnumArr),
+  alternatePhone: {
+    type: DataTypes.INTEGER,
   },
+  additionalEmail: {
+    type: DataTypes.STRING,
+    validate: {
+      isEmail: true,
+    },
+  },
+  gstNumber: {
+    type: DataTypes.STRING,
+  },
+  panNumber: {
+    type: DataTypes.STRING,
+  },
+  creditDays: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  creditLimit: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0.0,
+  },
+
   streetAddress: {
     type: DataTypes.STRING,
   },
@@ -63,36 +92,20 @@ Lead.initialize({
   landmark: {
     type: DataTypes.STRING,
   },
-  source: {
+
+  // Bank Details
+  accountNumber: {
     type: DataTypes.STRING,
   },
-  priorityLevel: {
-    type: DataTypes.ENUM(Lead.priorityEnumArr),
-  },
-  assignedSalesPerson: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: User,
-      key: User.primaryKeyAttribute,
-    },
-    allowNull: false,
-  },
-  leadType: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  followUp: {
-    type: DataTypes.DATEONLY,
-  },
-  description: {
-    type: DataTypes.TEXT,
-  },
-  companyName: {
+  bankName: {
     type: DataTypes.STRING,
   },
-  companyPhoneNo: {
+  branchAddress: {
+    type: DataTypes.STRING,
+  },
+  ifscCode: {
     type: DataTypes.STRING,
   },
 });
 
-export default Lead;
+export default Ledger;
