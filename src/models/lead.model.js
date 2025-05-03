@@ -9,6 +9,8 @@ class Lead extends BaseModel {
   static genderEnumArr = ["Male", "Female", "Other"];
 
   static priorityEnumArr = ["Low", "Medium", "High"];
+
+  static leadTypeArr = ["Company", "Individual"];
 }
 
 Lead.initialize({
@@ -78,7 +80,7 @@ Lead.initialize({
     allowNull: false,
   },
   leadType: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM(Lead.leadTypeArr),
     allowNull: false,
   },
   followUp: {
