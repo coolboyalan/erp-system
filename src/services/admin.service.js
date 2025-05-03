@@ -24,6 +24,7 @@ class AdminService extends BaseService {
 
     const payload = {
       adminId: admin.id,
+      userType: "admin",
       email,
     };
 

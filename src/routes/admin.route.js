@@ -5,11 +5,15 @@ import { authentication } from "#middlewares/authentication";
 
 const router = express.Router();
 
-// router.use(authentication);
-
 router
   .route("/login")
   .post(asyncHandler(AdminController.login.bind(AdminController)));
+
+router.use(authentication);
+
+router
+  .route("/get-current")
+  .get(asyncHandler(AdminController.getLoggedIn.bind(AdminController)));
 
 router
   .route("/:id?")

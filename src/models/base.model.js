@@ -134,6 +134,18 @@ class BaseModel extends Model {
     return data;
   }
 
+  static async findDoc(filters, allowNull = false) {
+    const doc = await this.findOne({ where: filters });
+    if (doc || allowNull) {
+      return doc;
+    }
+    throw new AppError({
+      status: false,
+      message: `${this.updatedName()} not found`,
+      httpStatus: httpStatus.NOT_FOUND,
+    });
+  }
+
   static async create(data, options = {}) {
     const createdDocument = await super.create(data);
     return createdDocument;

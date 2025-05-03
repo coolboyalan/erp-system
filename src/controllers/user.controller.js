@@ -1,3 +1,4 @@
+import httpStatus from "http-status";
 import UserService from "#services/user";
 import BaseController from "#controllers/base";
 

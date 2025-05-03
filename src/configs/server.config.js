@@ -2,7 +2,6 @@ import cors from "cors";
 import multer from "multer";
 import morgan from "morgan";
 import "#defaults/regionData";
-import multer from "multer";
 import express from "express";
 import router from "#routes/index";
 import logger from "#configs/logger";
@@ -15,10 +14,13 @@ const server = express();
 
 // Ensure the database connection is established before starting the server
 await sequelize.authenticate();
-await sequelize.sync();
+// await sequelize.sync();
 
 // Request logging middleware
 server.use(morgan(logger));
+
+//CORS
+server.use(cors());
 
 // Middleware to parse incoming JSON request bodies
 server.use(multer().any());
