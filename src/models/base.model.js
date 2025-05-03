@@ -69,6 +69,7 @@ class BaseModel extends Model {
       order = [["createdAt", "DESC"]],
       sortKey,
       sortDir,
+      pagination,
     } = filters;
 
     const attributes = this.rawAttributes;
@@ -96,23 +97,31 @@ class BaseModel extends Model {
     const offset = (page - 1) * limit;
 
     // Fetch data with pagination
-    const { count, rows } = await this.findAndCountAll({
-      where,
-      order,
-      limit,
-      offset,
-    });
+    const { count, rows } = await this.findAndCountAll(
+      pagination !== "false"
+        ? {
+            where,
+            order,
+            limit,
+            offset,
+          }
+        : { where, order },
+    );
 
     //WARN: Sorting and sort direction missing
 
     return {
       result: rows,
-      pagination: {
-        totalItems: count,
-        totalPages: Math.ceil(count / limit),
-        itemsPerPage: limit,
-        currentPage: page,
-      },
+      ...(pagination !== "false"
+        ? {
+            pagination: {
+              totalItems: count,
+              totalPages: Math.ceil(count / limit),
+              itemsPerPage: limit,
+              currentPage: page,
+            },
+          }
+        : {}),
     };
   }
 
@@ -134,6 +143,18 @@ class BaseModel extends Model {
     return data;
   }
 
+  static async findDoc(filters, allowNull = false) {
+    const doc = await this.findOne({ where: filters });
+    if (doc || allowNull) {
+      return doc;
+    }
+    throw new AppError({
+      status: false,
+      message: `${this.updatedName()} not found`,
+      httpStatus: httpStatus.NOT_FOUND,
+    });
+  }
+
   static async create(data, options = {}) {
     const createdDocument = await super.create(data);
     return createdDocument;
@@ -143,7 +164,7 @@ class BaseModel extends Model {
     const transaction = session.get("transaction");
 
     const files = session.get("files");
-    if (files.length) {
+    if (files?.length) {
       const attributes = this.constructor.rawAttributes;
 
       const filesPromises = [];
