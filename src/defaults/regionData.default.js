@@ -1294,10 +1294,157 @@ const region = {
 
       session.set("transaction", await sequelize.transaction());
 
+      const permissions = [
+        {
+          module: "Dashboard",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Ledger",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Role Management",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Employee",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Leads",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Products",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Quotations",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Warehouse",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Purchase",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Billing",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+        {
+          module: "Manage Payment",
+          access: {
+            create: true,
+            createAll: true,
+            read: true,
+            readAll: true,
+            update: true,
+            updateAll: true,
+            delete: true,
+            deleteAll: true,
+          },
+        },
+      ];
+
       const createdAdmin = await Admin.create({
         name: "admin",
         email: "johndoe@example.com",
         password: "password",
+        permissions,
       });
 
       const transaction = session.get("transaction");

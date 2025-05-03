@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import AdminService from "#services/admin";
 import BaseController from "#controllers/base";
 import { sendResponse } from "#utils/response";
+import { session } from "#middlewares/requestSession";
 
 class AdminController extends BaseController {
   static Service = AdminService;
@@ -12,7 +13,8 @@ class AdminController extends BaseController {
   }
 
   static async getLoggedIn(req, res, next) {
-    const loggedInUser = await this.Service.getDocById();
+    const adminId = session.get("adminId");
+    const loggedInUser = await this.Service.getDocById(adminId);
     sendResponse(httpStatus.OK, res, loggedInUser);
   }
 }
