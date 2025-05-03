@@ -1,9 +1,9 @@
 class BaseService {
   static Model = null;
 
-  static async get(id, filters) {
+  static async get(id, filters, options = {}) {
     if (!id) {
-      return await this.Model.find(filters);
+      return await this.Model.find(filters, options);
     }
     return await this.Model.findDocById(id);
   }

@@ -61,7 +61,7 @@ class BaseModel extends Model {
     }, {});
   }
 
-  static async find(filters, options) {
+  static async find(filters, options = {}) {
     const {
       search = "",
       searchKey = "",
