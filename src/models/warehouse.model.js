@@ -36,6 +36,9 @@ Warehouse.initialize({
       key: City.primaryKeyAttribute,
     },
   },
+  pinCode: {
+    type: DataTypes.INTEGER,
+  },
 });
 
 export default Warehouse;

@@ -9,7 +9,6 @@ Bin.initialize(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      //WARN: Unique constraint missing
     },
     warehouseId: {
       type: DataTypes.INTEGER,
