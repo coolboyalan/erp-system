@@ -61,7 +61,7 @@ class BaseModel extends Model {
     }, {});
   }
 
-  static async find(filters) {
+  static async find(filters, options) {
     const {
       search = "",
       searchKey = "",
@@ -72,6 +72,8 @@ class BaseModel extends Model {
       pagination,
       ...restFilters // captures other filter keys
     } = filters;
+
+    const { columns = ["*"] } = options;
 
     const tableName = this.getTableName();
     const attributes = this.rawAttributes;
@@ -143,7 +145,7 @@ class BaseModel extends Model {
       pagination !== "false" ? `LIMIT ${limit} OFFSET ${offset}` : "";
 
     // Data Query
-    const dataQuery = `SELECT * FROM "${tableName}" ${whereSQL} ${orderSQL} ${limitSQL}`;
+    const dataQuery = `SELECT ${columns.join(" ")} FROM "${tableName}" ${whereSQL} ${orderSQL} ${limitSQL}`;
 
     // Count Query
     const countQuery = `SELECT COUNT(*) AS count FROM "${tableName}" ${whereSQL}`;
