@@ -69,6 +69,7 @@ class BaseModel extends Model {
       order = [["createdAt", "DESC"]],
       sortKey,
       sortDir,
+      pagination,
     } = filters;
 
     const attributes = this.rawAttributes;
@@ -96,23 +97,31 @@ class BaseModel extends Model {
     const offset = (page - 1) * limit;
 
     // Fetch data with pagination
-    const { count, rows } = await this.findAndCountAll({
-      where,
-      order,
-      limit,
-      offset,
-    });
+    const { count, rows } = await this.findAndCountAll(
+      pagination !== "false"
+        ? {
+            where,
+            order,
+            limit,
+            offset,
+          }
+        : { where, order },
+    );
 
     //WARN: Sorting and sort direction missing
 
     return {
       result: rows,
-      pagination: {
-        totalItems: count,
-        totalPages: Math.ceil(count / limit),
-        itemsPerPage: limit,
-        currentPage: page,
-      },
+      ...(pagination !== "false"
+        ? {
+            pagination: {
+              totalItems: count,
+              totalPages: Math.ceil(count / limit),
+              itemsPerPage: limit,
+              currentPage: page,
+            },
+          }
+        : {}),
     };
   }
 
