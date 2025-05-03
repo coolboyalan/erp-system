@@ -8,6 +8,10 @@ class BaseService {
     return await this.Model.findDocById(id);
   }
 
+  static async getDocById(id) {
+    return await this.Model.findDocById(id);
+  }
+
   static async create(data) {
     const createdDoc = await this.Model.create(data);
     return createdDoc;
