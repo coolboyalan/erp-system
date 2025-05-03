@@ -8,6 +8,10 @@ const router = express.Router();
 // router.use(authentication);
 
 router
+  .route("/login")
+  .post(asyncHandler(AdminController.login.bind(AdminController)));
+
+router
   .route("/:id?")
   .get(asyncHandler(AdminController.get.bind(AdminController)))
   .post(asyncHandler(AdminController.create.bind(AdminController)))
