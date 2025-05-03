@@ -73,7 +73,7 @@ class BaseModel extends Model {
       ...restFilters // captures other filter keys
     } = filters;
 
-    const { columns = ["*"] } = options;
+    const { fields = ["*"] } = options;
 
     const tableName = this.getTableName();
     const attributes = this.rawAttributes;
@@ -145,7 +145,7 @@ class BaseModel extends Model {
       pagination !== "false" ? `LIMIT ${limit} OFFSET ${offset}` : "";
 
     // Data Query
-    const dataQuery = `SELECT ${columns.join(" ")} FROM "${tableName}" ${whereSQL} ${orderSQL} ${limitSQL}`;
+    const dataQuery = `SELECT ${fields.join(" ")} FROM "${tableName}" ${whereSQL} ${orderSQL} ${limitSQL}`;
 
     // Count Query
     const countQuery = `SELECT COUNT(*) AS count FROM "${tableName}" ${whereSQL}`;
