@@ -151,9 +151,20 @@ class BaseModel extends Model {
       });
     }
 
+    function autoQuoteField(field) {
+      if (/["()]/.test(field) || /\s+AS\s+/i.test(field)) return field;
+      if (/^[a-zA-Z_]+\.[a-zA-Z_]+$/.test(field)) {
+        const [alias, column] = field.split(".");
+        return `"${alias}"."${column}"`;
+      }
+      return `"${field}"`;
+    }
+
+    const quotedFields = fields.map(autoQuoteField);
+
     // Final Queries
     const dataQuery = `
-    SELECT ${fields.join(",")}
+    SELECT ${quotedFields.join(",")}
     FROM "${tableName}"
     ${joinClauses}
     ${whereSQL}
