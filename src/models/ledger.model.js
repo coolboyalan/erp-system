@@ -22,7 +22,7 @@ Ledger.initialize({
     type: DataTypes.ENUM(Ledger.ledgerTypeEnumArr),
     allowNull: false,
   },
-  assignedSalesPerson: {
+  assignedPerson: {
     type: DataTypes.INTEGER,
     references: {
       model: User,
@@ -41,7 +41,7 @@ Ledger.initialize({
   alternatePhone: {
     type: DataTypes.INTEGER,
   },
-  additionalEmail: {
+  alternateEmail: {
     type: DataTypes.STRING,
     validate: {
       isEmail: true,
@@ -65,21 +65,21 @@ Ledger.initialize({
   streetAddress: {
     type: DataTypes.STRING,
   },
-  country: {
+  countryId: {
     type: DataTypes.INTEGER,
     references: {
       model: Country,
       key: Country.primaryKeyAttribute,
     },
   },
-  state: {
+  stateId: {
     type: DataTypes.INTEGER,
     references: {
       model: State,
       key: State.primaryKeyAttribute,
     },
   },
-  city: {
+  cityId: {
     type: DataTypes.INTEGER,
     references: {
       model: City,
@@ -94,7 +94,7 @@ Ledger.initialize({
   },
 
   // Bank Details
-  accountNumber: {
+  accountNo: {
     type: DataTypes.STRING,
   },
   bankName: {
