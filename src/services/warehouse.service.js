@@ -33,6 +33,7 @@ class WarehouseService extends BaseService {
         "Warehouses.name",
         "Warehouses.id",
         "Warehouses.createdAt",
+        "pinCode",
       ];
 
       options.fields = fields;
@@ -40,6 +41,8 @@ class WarehouseService extends BaseService {
 
       return await this.Model.find(filter, options);
     }
+
+    return await this.Model.findDocById(id);
   }
 }
 
