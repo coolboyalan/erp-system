@@ -151,7 +151,7 @@ class BaseModel extends Model {
       });
     }
 
-    function autoQuoteField(field, tableName = "") {
+    function autoQuoteField(field) {
       if (field === "*") return "*";
 
       // Already quoted or special (e.g., COUNT(*))
