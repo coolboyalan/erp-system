@@ -153,6 +153,11 @@ class BaseModel extends Model {
 
     function autoQuoteField(field) {
       if (field === "*") return "*";
+
+      if (!field.includes(".")) {
+        return `"${tableName}.${field}"`;
+      }
+
       if (/\s+AS\s+/i.test(field)) {
         const [rawField, alias] = field.split(/\s+AS\s+/i);
         return `${autoQuoteField(rawField)} AS ${alias}`;
