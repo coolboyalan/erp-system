@@ -70,10 +70,10 @@ class BaseModel extends Model {
       sortKey,
       sortDir,
       pagination,
-      ...restFilters // captures other filter keys
+      ...restFilters
     } = filters;
 
-    const { fields = ["*"] } = options;
+    const { fields = ["*"], lookups } = options;
 
     const tableName = this.getTableName();
     const attributes = this.rawAttributes;
@@ -105,11 +105,11 @@ class BaseModel extends Model {
       }
 
       const paramKey = `filter_${key}`;
-      whereClauses.push(`"${key}" = :${paramKey}`);
+      whereClauses.push(`"${tableName}"."${key}" = :${paramKey}`);
       replacements[paramKey] = filters[key];
     });
 
-    // Validate searchKey if present
+    // Search key validation
     if (search && searchKey) {
       if (!attributes[searchKey] || !attributes[searchKey].searchable) {
         throw new AppError({
@@ -120,11 +120,10 @@ class BaseModel extends Model {
       }
 
       const paramKey = `search_0`;
-      whereClauses.push(`"${searchKey}" ILIKE :${paramKey}`);
+      whereClauses.push(`"${tableName}"."${searchKey}" ILIKE :${paramKey}`);
       replacements[paramKey] = `%${search}%`;
     }
 
-    // WHERE clause
     const whereSQL = whereClauses.length
       ? `WHERE ${whereClauses.join(" AND ")}`
       : "";
@@ -133,8 +132,8 @@ class BaseModel extends Model {
     const defaultOrder = [["createdAt", "DESC"]];
     const sortColumn =
       sortKey && attributes[sortKey]
-        ? `"${sortKey}"`
-        : `"${defaultOrder[0][0]}"`;
+        ? `"${tableName}"."${sortKey}"`
+        : `"${tableName}"."${defaultOrder[0][0]}"`;
     const sortDirection =
       sortDir?.toUpperCase() === "ASC" ? "ASC" : defaultOrder[0][1];
     const orderSQL = `ORDER BY ${sortColumn} ${sortDirection}`;
@@ -144,11 +143,30 @@ class BaseModel extends Model {
     const limitSQL =
       pagination !== "false" ? `LIMIT ${limit} OFFSET ${offset}` : "";
 
-    // Data Query
-    const dataQuery = `SELECT ${fields.join(",")} FROM "${tableName}" ${whereSQL} ${orderSQL} ${limitSQL}`;
+    // Join Clauses
+    let joinClauses = "";
+    if (lookups && Array.isArray(lookups)) {
+      lookups.forEach(({ from, as, localField, foreignField }) => {
+        joinClauses += ` LEFT JOIN "${from}" AS "${as}" ON "${tableName}"."${localField}" = "${as}"."${foreignField}"`;
+      });
+    }
 
-    // Count Query
-    const countQuery = `SELECT COUNT(*) AS count FROM "${tableName}" ${whereSQL}`;
+    // Final Queries
+    const dataQuery = `
+    SELECT ${fields.join(",")}
+    FROM "${tableName}"
+    ${joinClauses}
+    ${whereSQL}
+    ${orderSQL}
+    ${limitSQL}
+  `;
+
+    const countQuery = `
+    SELECT COUNT(*) AS count
+    FROM "${tableName}"
+    ${joinClauses}
+    ${whereSQL}
+  `;
 
     const result = await this.sequelize.query(dataQuery, {
       replacements,
