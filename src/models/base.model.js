@@ -151,20 +151,28 @@ class BaseModel extends Model {
       });
     }
 
-    function autoQuoteField(field) {
+    function autoQuoteField(field, tableName = "") {
       if (field === "*") return "*";
 
+      // Already quoted or special (e.g., COUNT(*))
+      if (/["()]/.test(field) && !/\s+AS\s+/i.test(field)) return field;
+
+      // Handle aliasing with "AS"
+      if (/\s+AS\s+/i.test(field)) {
+        const [rawField, alias] = field.split(/\s+AS\s+/i);
+        const quotedField = autoQuoteField(rawField, tableName);
+
+        // Quote alias if it contains any uppercase letters
+        const quotedAlias = /[A-Z]/.test(alias) ? `"${alias}"` : alias;
+        return `${quotedField} AS ${quotedAlias}`;
+      }
+
+      // No table prefix — assume it's from the main table
       if (!field.includes(".")) {
         return `"${tableName}"."${field}"`;
       }
 
-      if (/\s+AS\s+/i.test(field)) {
-        const [rawField, alias] = field.split(/\s+AS\s+/i);
-        return `${autoQuoteField(rawField)} AS ${alias}`;
-      }
-
-      if (/["()]/.test(field)) return field; // Already quoted or special
-
+      // Handle table.field pattern
       if (/^[a-zA-Z_]+\.[a-zA-Z_]+$/.test(field)) {
         const [table, col] = field.split(".");
         return `"${table}"."${col}"`;
