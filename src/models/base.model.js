@@ -153,12 +153,18 @@ class BaseModel extends Model {
 
     function autoQuoteField(field) {
       if (field === "*") return "*";
-
-      if (/["()]/.test(field) || /\s+AS\s+/i.test(field)) return field;
-      if (/^[a-zA-Z_]+\.[a-zA-Z_]+$/.test(field)) {
-        const [alias, column] = field.split(".");
-        return `"${alias}"."${column}"`;
+      if (/\s+AS\s+/i.test(field)) {
+        const [rawField, alias] = field.split(/\s+AS\s+/i);
+        return `${autoQuoteField(rawField)} AS ${alias}`;
       }
+
+      if (/["()]/.test(field)) return field; // Already quoted or special
+
+      if (/^[a-zA-Z_]+\.[a-zA-Z_]+$/.test(field)) {
+        const [table, col] = field.split(".");
+        return `"${table}"."${col}"`;
+      }
+
       return `"${field}"`;
     }
 
