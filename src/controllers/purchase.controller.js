@@ -1,7 +1,7 @@
-import PurchaseService from "#services/purchase";
+import httpStatus from "http-status";
 import BaseController from "#controllers/base";
 import { sendResponse } from "#utils/response";
-import httpStatus from "http-status";
+import PurchaseService from "#services/purchase";
 
 class PurchaseController extends BaseController {
   static Service = PurchaseService;
@@ -12,7 +12,7 @@ class PurchaseController extends BaseController {
   }
 
   static async updateStatus(req, res, next) {
-    const data = await this.Service.moveToWarehouse(req.body);
+    const data = await this.Service.moveToWarehouse(req.params.id,req.body);
     sendResponse(
       httpStatus.OK,
       res,

@@ -12,8 +12,8 @@ router
   .get(asyncHandler(PurchaseController.getBaseField.bind(PurchaseController)));
 
 router
-  .route("/update-status")
-  .post(asyncHandler(PurchaseController.updateStatus.bind(PurchaseController)));
+  .route("/update-status/:id")
+  .put(asyncHandler(PurchaseController.updateStatus.bind(PurchaseController)));
 
 router
   .route("/:id?")

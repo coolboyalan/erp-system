@@ -71,7 +71,16 @@ class PurchaseService extends BaseService {
   static async create(data) {
     const { products } = data;
 
+    if (!products.length) {
+      throw new AppError({
+        status: false,
+        message: "Please add atleast one product",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
     const fetchedProducts = products.map((ele) => {
+      ele.maxQuantity = ele.quantity;
       return ProductService.getDocById(ele.id);
     });
 
@@ -112,10 +121,10 @@ class PurchaseService extends BaseService {
     return purchase;
   }
 
-  static async moveToWarehouse(id) {
+  static async moveToWarehouse(id, data) {
     const purchase = await this.Model.findDocById(id);
 
-    const { movedToWarehouse } = purchase;
+    const { movedToWarehouse } = data;
 
     if (purchase.movedToWarehouse && movedToWarehouse === false) {
       const existingProductEntry = await PurchaseService.getDoc({
@@ -125,6 +134,7 @@ class PurchaseService extends BaseService {
         throw {
           status: false,
           message: `Cannot revert back the status, a product is already present in bin with the id ${existingProductEntry.binId}`,
+          httpStatus: httpStatus.CONFLICT,
         };
       }
     }
@@ -146,6 +156,7 @@ class PurchaseService extends BaseService {
       throw {
         status: false,
         message: `Cannot revert back the status, a product is already present in bin with the id ${existingProductEntry.binId}`,
+        httpStatus: httpStatus.CONFLICT,
       };
     }
 
