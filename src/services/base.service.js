@@ -8,8 +8,12 @@ class BaseService {
     return await this.Model.findDocById(id);
   }
 
-  static async getDocById(id) {
-    return await this.Model.findDocById(id);
+  static async getDoc(filters, allowNull = false) {
+    return await this.Model.findDoc(filters, allowNull);
+  }
+
+  static async getDocById(id, allowNull = false) {
+    return await this.Model.findDocById(id, allowNull);
   }
 
   static async create(data) {
