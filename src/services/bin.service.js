@@ -6,7 +6,7 @@ import ProductEntryService from "#services/productEntry";
 class BinService extends BaseService {
   static Model = Bin;
 
-  static async get(id, filters) {
+  static async get(id, filters, options) {
     if (!id) {
       const options = {
         fields: ["id", "name"],

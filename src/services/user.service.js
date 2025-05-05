@@ -5,9 +5,37 @@ import randomPassword from "#utils/password";
 class UserService extends BaseService {
   static Model = User;
 
+  static async get(id, filters, options = {}) {
+    if (!id) {
+      const fields = [
+        "name",
+        "email",
+        "phone",
+        "id",
+        "roleData.name",
+        "isActive",
+        "createdAt",
+      ];
+
+      const lookups = [
+        {
+          from: "Roles",
+          as: "roleData",
+          localField: "roleId",
+          foreignField: "id",
+        },
+      ];
+      options.fields = fields;
+      options.lookups = lookups;
+      return await this.Model.find(filters, options);
+    }
+
+    return await this.Model.findDocById(id);
+  }
+
   static async create(data) {
     const { password } = data;
-    password = password ?? randomPassword(8);
+    data.password = password ?? randomPassword(8);
     return await super.create(data);
   }
 

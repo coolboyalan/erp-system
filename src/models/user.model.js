@@ -10,6 +10,10 @@ class User extends BaseModel {}
 
 User.initialize(
   {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     phone: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -25,7 +29,7 @@ User.initialize(
       },
       //WARN: Unique constraint missing
     },
-    role: {
+    roleId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
