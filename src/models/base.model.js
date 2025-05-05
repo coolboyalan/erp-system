@@ -152,6 +152,8 @@ class BaseModel extends Model {
     }
 
     function autoQuoteField(field) {
+      if (field === "*") return "*";
+
       if (/["()]/.test(field) || /\s+AS\s+/i.test(field)) return field;
       if (/^[a-zA-Z_]+\.[a-zA-Z_]+$/.test(field)) {
         const [alias, column] = field.split(".");
