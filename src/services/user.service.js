@@ -12,7 +12,7 @@ class UserService extends BaseService {
         "email",
         "phone",
         "id",
-        "roleData.name",
+        "roleData.name AS roleName",
         "isActive",
         "createdAt",
       ];
