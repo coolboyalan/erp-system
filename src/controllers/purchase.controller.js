@@ -10,6 +10,16 @@ class PurchaseController extends BaseController {
     const data = await this.Service.getBaseFields();
     sendResponse(httpStatus.OK, res, data);
   }
+
+  static async updateStatus(req, res, next) {
+    const data = await this.Service.moveToWarehouse(req.body);
+    sendResponse(
+      httpStatus.OK,
+      res,
+      data,
+      "Purchase status updated successfully",
+    );
+  }
 }
 
 export default PurchaseController;

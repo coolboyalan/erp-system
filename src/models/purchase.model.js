@@ -8,76 +8,99 @@ class Purchase extends BaseModel {
   static paymentTypeArr = ["Cash", "Cheque", "NEFT"];
 }
 
-Purchase.initialize({
-  warehouseId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Warehouse,
-      key: Warehouse.primaryKeyAttribute,
+Purchase.initialize(
+  {
+    warehouseId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Warehouse,
+        key: Warehouse.primaryKeyAttribute,
+      },
+      allowNull: false,
     },
-    allowNull: false,
-  },
-  ledgerId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Ledger,
-      key: Ledger.primaryKeyAttribute,
+    ledgerId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Ledger,
+        key: Ledger.primaryKeyAttribute,
+      },
+      allowNull: false,
     },
-    allowNull: false,
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: User,
-      key: User.primaryKeyAttribute,
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: User,
+        key: User.primaryKeyAttribute,
+      },
+      allowNull: false,
     },
-    allowNull: false,
+    referenceNo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      //WARN: UniqueNo
+    },
+    purchaseNo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      //WARN: Unique
+    },
+    purchaseDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    paymentMode: {
+      type: DataTypes.ENUM(Purchase.paymentTypeArr),
+      allowNull: false,
+    },
+    remarks: {
+      type: DataTypes.TEXT,
+    },
+    totalQuantity: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    totalValue: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    discountAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    taxableAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    gstAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    netAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    products: {
+      type: DataTypes.JSON,
+    },
+    purchaseReturnId: {
+      type: DataTypes.INTEGER,
+    },
+    movedToWarehouse: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   },
-  referenceNo: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    //WARN: UniqueNo
+  {
+    indexes: [
+      {
+        fields: ["purchaseNo"],
+      },
+      {
+        fields: ["movedToWarehouse", "warehouseId"],
+      },
+    ],
   },
-  purchaseNo: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    //WARN: Unique
-  },
-  purchaseDate: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  paymentMode: {
-    type: DataTypes.ENUM(Purchase.paymentTypeArr),
-    allowNull: false,
-  },
-  remarks: {
-    type: DataTypes.TEXT,
-  },
-  totalQuantity: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  totalValue: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  discountAmount: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  taxableAmount: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  gstAmount: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  netAmount: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-});
+);
 
 export default Purchase;

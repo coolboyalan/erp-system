@@ -30,6 +30,8 @@ class ProductService extends BaseService {
 
       return await this.Model.find(filters, options);
     }
+
+    return await this.Model.findDocById(id);
   }
 }
 

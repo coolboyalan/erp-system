@@ -47,6 +47,18 @@ ProductEntry.initialize(
       {
         fields: ["binId"],
       },
+      {
+        fields: ["productId"],
+      },
+      {
+        fields: ["purchaseId"],
+      },
+      {
+        fields: ["packed"],
+      },
+      {
+        fields: ["productId", "packed"],
+      },
     ],
   },
 );
