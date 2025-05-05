@@ -155,7 +155,7 @@ class BaseModel extends Model {
       if (field === "*") return "*";
 
       if (!field.includes(".")) {
-        return `"${tableName}.${field}"`;
+        return `"${tableName}"."${field}"`;
       }
 
       if (/\s+AS\s+/i.test(field)) {
