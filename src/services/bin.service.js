@@ -19,7 +19,10 @@ class BinService extends BaseService {
   static async deleteDoc(id) {
     const bin = await this.Model.findDocById(id);
 
-    const existingProducts = await ProductEntryService.getDoc({ binId: id });
+    const existingProducts = await ProductEntryService.getDoc(
+      { binId: id },
+      true,
+    );
     if (existingProducts) {
       throw new AppError({
         status: false,
@@ -27,6 +30,7 @@ class BinService extends BaseService {
         httpStatus: httpStatus.BAD_REQUEST,
       });
     }
+
     await bin.destroy({ force: true });
   }
 }
