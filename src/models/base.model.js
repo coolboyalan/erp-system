@@ -214,19 +214,17 @@ class BaseModel extends Model {
       count = parseInt(countResult.count, 10);
     }
 
-    return {
-      result,
-      ...(pagination !== "false"
-        ? {
-            pagination: {
-              totalItems: count,
-              totalPages: Math.ceil(count / limit),
-              itemsPerPage: limit,
-              currentPage: page,
-            },
-          }
-        : {}),
-    };
+    return pagination !== "false"
+      ? {
+          result,
+          pagination: {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            itemsPerPage: limit,
+            currentPage: page,
+          },
+        }
+      : result;
   }
 
   static async findDocById(id, allowNull = false) {
