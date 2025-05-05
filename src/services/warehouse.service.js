@@ -3,6 +3,39 @@ import BaseService from "#services/base";
 
 class WarehouseService extends BaseService {
   static Model = Warehouse;
+
+  static async get(id, filter, options = {}) {
+    if (!id) {
+      const lookups = [
+        {
+          from: "Cities",
+          as: "cityData",
+          localField: "cityId",
+          foreignField: "id",
+        },
+        {
+          from: "States",
+          as: "stateData",
+          localField: "stateid",
+          foreignField: "id",
+        },
+        {
+          from: "Countries",
+          as: "countryData",
+          localField: "countryId",
+          foreignField: "id",
+        },
+      ];
+      const fields = [
+        "cityData.name AS city",
+        "stateData.name as state",
+        "countryData.name as country",
+      ];
+
+      options.fields = fields;
+      options.lookups = lookups;
+    }
+  }
 }
 
 export default WarehouseService;
