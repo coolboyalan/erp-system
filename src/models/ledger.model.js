@@ -30,7 +30,7 @@ Ledger.initialize({
     },
   },
   phone: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
   },
   email: {
     type: DataTypes.STRING,
@@ -39,7 +39,7 @@ Ledger.initialize({
     },
   },
   alternatePhone: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
   },
   alternateEmail: {
     type: DataTypes.STRING,

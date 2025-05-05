@@ -1,8 +1,12 @@
+import User from "#models/user";
+import Ledger from "#models/ledger";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
 import Warehouse from "#models/warehouse";
 
-class Purchase extends BaseModel {}
+class Purchase extends BaseModel {
+  static paymentTypeArr = ["Cash", "Cheque", "NEFT"];
+}
 
 Purchase.initialize({
   warehouseId: {
@@ -11,6 +15,67 @@ Purchase.initialize({
       model: Warehouse,
       key: Warehouse.primaryKeyAttribute,
     },
+    allowNull: false,
+  },
+  ledgerId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Ledger,
+      key: Ledger.primaryKeyAttribute,
+    },
+    allowNull: false,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: User.primaryKeyAttribute,
+    },
+    allowNull: false,
+  },
+  referenceNo: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    //WARN: UniqueNo
+  },
+  purchaseNo: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    //WARN: Unique
+  },
+  purchaseDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  paymentMode: {
+    type: DataTypes.ENUM(Purchase.paymentTypeArr),
+    allowNull: false,
+  },
+  remarks: {
+    type: DataTypes.TEXT,
+  },
+  totalQuantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  totalValue: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  discountAmount: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  taxableAmount: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  gstAmount: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  netAmount: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
 });

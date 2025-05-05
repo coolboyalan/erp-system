@@ -8,6 +8,10 @@ const router = express.Router();
 // router.use(authentication);
 
 router
+  .route("/base-fields")
+  .get(asyncHandler(PurchaseController.getBaseField.bind(PurchaseController)));
+
+router
   .route("/:id?")
   .get(asyncHandler(PurchaseController.get.bind(PurchaseController)))
   .post(asyncHandler(PurchaseController.create.bind(PurchaseController)))

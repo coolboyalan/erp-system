@@ -14,11 +14,7 @@ class Lead extends BaseModel {
 }
 
 Lead.initialize({
-  firstName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  lastName: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -38,21 +34,21 @@ Lead.initialize({
   streetAddress: {
     type: DataTypes.STRING,
   },
-  country: {
+  countryId: {
     type: DataTypes.INTEGER,
     references: {
       model: Country,
       key: Country.primaryKeyAttribute,
     },
   },
-  state: {
+  stateId: {
     type: DataTypes.INTEGER,
     references: {
       model: State,
       key: State.primaryKeyAttribute,
     },
   },
-  city: {
+  cityId: {
     type: DataTypes.INTEGER,
     references: {
       model: City,
@@ -71,7 +67,7 @@ Lead.initialize({
   priorityLevel: {
     type: DataTypes.ENUM(Lead.priorityEnumArr),
   },
-  assignedSalesPerson: {
+  assignedPerson: {
     type: DataTypes.INTEGER,
     references: {
       model: User,
@@ -94,6 +90,9 @@ Lead.initialize({
   },
   companyPhoneNo: {
     type: DataTypes.STRING,
+  },
+  age: {
+    type: DataTypes.INTEGER,
   },
 });
 

@@ -2,6 +2,7 @@ import Bin from "#models/bin";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
 import Product from "#models/product";
+import Purchase from "#models/purchase";
 
 class ProductEntry extends BaseModel {}
 
@@ -26,6 +27,19 @@ ProductEntry.initialize(
         model: Bin,
         key: Bin.primaryKeyAttribute,
       },
+    },
+    packed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    purchaseId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Purchase,
+        key: Purchase.primaryKeyAttribute,
+      },
+      allowNull: false,
     },
   },
   {
