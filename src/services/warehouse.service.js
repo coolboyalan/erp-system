@@ -16,7 +16,7 @@ class WarehouseService extends BaseService {
         {
           from: "States",
           as: "stateData",
-          localField: "stateid",
+          localField: "stateId",
           foreignField: "id",
         },
         {
@@ -30,10 +30,15 @@ class WarehouseService extends BaseService {
         "cityData.name AS city",
         "stateData.name as state",
         "countryData.name as country",
+        "Warehouses.name",
+        "Warehouses.id",
+        "Warehouses.createdAt",
       ];
 
       options.fields = fields;
       options.lookups = lookups;
+
+      return await this.Model.find(filter, options);
     }
   }
 }
