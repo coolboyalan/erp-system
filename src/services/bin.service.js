@@ -2,6 +2,7 @@ import Bin from "#models/bin";
 import AppError from "#utils/appError";
 import BaseService from "#services/base";
 import ProductEntryService from "#services/productEntry";
+import sequelize from "#configs/database";
 
 class BinService extends BaseService {
   static Model = Bin;
@@ -13,7 +14,20 @@ class BinService extends BaseService {
       };
       return await this.Model.find(filters, options);
     }
-    return this.Model.findDocById(id);
+
+    const query = `
+  				SELECT
+    				COUNT(*) AS quantity,
+    				"Products"."id" AS "productId",
+    				"Products"."code" AS "productCode",
+    				"Products"."name"
+  				FROM "ProductEntries" AS "data"
+  				INNER JOIN "Products" ON "Products"."id" = "data"."productId"
+  				WHERE "data"."binId" = ${id}
+  				GROUP BY "Products"."id", "Products"."code", "Products"."name"
+`;
+    const [data] = await sequelize.query(query);
+    return data;
   }
 
   static async deleteDoc(id) {

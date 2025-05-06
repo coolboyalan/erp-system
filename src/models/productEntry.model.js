@@ -16,7 +16,7 @@ ProductEntry.initialize(
     productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      refernces: {
+      references: {
         model: Product,
         key: Product.primaryKeyAttribute,
       },
@@ -27,6 +27,7 @@ ProductEntry.initialize(
         model: Bin,
         key: Bin.primaryKeyAttribute,
       },
+      searchable: false,
     },
     packed: {
       type: DataTypes.BOOLEAN,

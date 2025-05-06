@@ -90,6 +90,11 @@ Purchase.initialize(
       defaultValue: false,
       allowNull: false,
     },
+    stockSettled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   },
   {
     indexes: [
