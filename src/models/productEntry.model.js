@@ -34,6 +34,11 @@ ProductEntry.initialize(
       allowNull: false,
       defaultValue: false,
     },
+    markedForPacking: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
     purchaseId: {
       type: DataTypes.INTEGER,
       references: {

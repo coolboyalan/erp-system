@@ -1,8 +1,9 @@
 import Bin from "#models/bin";
+import httpStatus from "http-status";
 import AppError from "#utils/appError";
 import BaseService from "#services/base";
-import ProductEntryService from "#services/productEntry";
 import sequelize from "#configs/database";
+import ProductEntryService from "#services/productEntry";
 
 class BinService extends BaseService {
   static Model = Bin;
