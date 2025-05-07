@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import AppError from "#utils/appError";
 import BaseService from "#services/base";
 import PurchaseService from "#services/purchase";
+import BinService from "#services/bin";
 
 class ProductEntryService extends BaseService {
   static Model = ProductEntry;
@@ -75,6 +76,69 @@ class ProductEntryService extends BaseService {
     purchase.set("products", updatedProducts); // ✅ Explicitly set the field
     await purchase.save();
     await this.Model.bulkCreate(data);
+  }
+
+  static async getWithBarCode(data) {
+    const { barCode, warehouseId } = data;
+
+    const lookups = [
+      {
+        from: "Bins",
+        as: "binData",
+        localField: "binId",
+        foreignField: "id",
+      },
+      {
+        from: "Products",
+        as: "productData",
+        localField: "productId",
+        foreignField: "id",
+      },
+    ];
+
+    const fields = [
+      "barCode",
+      "id",
+      "binId",
+      "productData.name AS productName",
+      "productData.code AS productCode",
+      "productData.id AS productId",
+      "binData.name AS binName",
+      "binData.warehouseId AS warehouseId",
+    ];
+
+    const options = { fields, lookups };
+
+    let entry = await this.get(
+      null,
+      {
+        barCode,
+        packed: false,
+        markedForPacking: false,
+        pagination: "false",
+      },
+      options,
+    );
+
+    if (!entry.length) {
+      throw new AppError({
+        status: false,
+        message: "Product not found",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    entry = entry[0];
+
+    if (entry.warehouseId !== Number(warehouseId)) {
+      throw new AppError({
+        status: false,
+        message: "Product belongs to a different warehouse",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    return entry;
   }
 }
 

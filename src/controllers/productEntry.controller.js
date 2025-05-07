@@ -1,8 +1,15 @@
-import ProductEntryService from "#services/productEntry";
+import httpStatus from "http-status";
+import { sendResponse } from "#utils/response";
 import BaseController from "#controllers/base";
+import ProductEntryService from "#services/productEntry";
 
 class ProductEntryController extends BaseController {
   static Service = ProductEntryService;
+
+  static async getWithBarCode(req, res, next) {
+    const data = await this.Service.getWithBarCode(req.query);
+    sendResponse(httpStatus.OK, res, data);
+  }
 }
 
 export default ProductEntryController;

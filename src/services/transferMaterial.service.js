@@ -45,24 +45,15 @@ class TransferMaterialService extends BaseService {
     const productEntries = [];
 
     // Collect the product entries for later bulk update
-    for (const product of products) {
+    for (const entry of products) {
       const entries = await ProductEntry.findAll({
         where: {
-          binId: product.fromBinId,
+          binId: entry.fromBinId,
           packed: false,
           markedForPacking: false,
-          productId: product.productId,
+          id: entry.id,
         },
-        limit: product.quantity,
       });
-
-      if (entries.length !== product.quantity) {
-        throw new AppError({
-          status: false,
-          message: "Insufficient stock, please provide valid values",
-          httpStatus: httpStatus.BAD_REQUEST,
-        });
-      }
 
       productEntries.push(entries);
     }
@@ -141,8 +132,9 @@ class TransferMaterialService extends BaseService {
 		fromData.name AS "fromName",
     	to_bin.name AS "toBinName",
     	prod.name AS "productName",
+		prod.id AS "productId",
     	from_bin.name AS "fromBinName",
-    	(product->>'quantity')::int AS quantity
+    	(product->>'barCode') AS barCode
   	FROM "TransferMaterials" t
   	CROSS JOIN LATERAL json_array_elements(t.products) AS product
   	JOIN "Bins" to_bin ON (product->>'toBinId')::int = to_bin.id
