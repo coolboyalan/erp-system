@@ -92,6 +92,7 @@ class BaseModel extends Model {
           "sortKey",
           "sortDir",
           "pagination",
+          "id",
         ].includes(key)
       )
         return;
