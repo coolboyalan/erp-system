@@ -81,6 +81,11 @@ Quotation.initialize({
     allowNull: false,
     defaultValue: false,
   },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
 });
 
 export default Quotation;

@@ -17,7 +17,8 @@
     "#configs/*": "./src/configs/*.config.js",
     "#models/*": "./src/models/*.model.js",
     "#middlewares/*": "./src/middlewares/*.middleware.js",
-    "#defaults/*": "./src/defaults/*.default.js"
+    "#defaults/*": "./src/defaults/*.default.js",
+    "#scripts/*": "./src/scripts/*.script.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.800.0",

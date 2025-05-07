@@ -29,6 +29,7 @@ class QuotationController extends BaseController {
       "quotationDate",
       "status",
       "netAmount",
+      "age",
     ];
 
     const lookups = [
