@@ -92,12 +92,11 @@ class BaseModel extends Model {
           "sortKey",
           "sortDir",
           "pagination",
-          "id",
         ].includes(key)
       )
         return;
 
-      if (!attributes[key] || !attributes[key].filterable) {
+      if (key !== "id" && (!attributes[key] || !attributes[key].filterable)) {
         throw new AppError({
           status: false,
           message: `Field "${key}" is not filterable`,
