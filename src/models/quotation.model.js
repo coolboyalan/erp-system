@@ -11,7 +11,6 @@ class Quotation extends BaseModel {
 Quotation.initialize({
   ledgerId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
     references: {
       model: Ledger,
       key: Ledger.primaryKeyAttribute,
@@ -19,7 +18,6 @@ Quotation.initialize({
   },
   leadId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
     references: {
       model: Lead,
       key: Lead.primaryKeyAttribute,
@@ -41,7 +39,7 @@ Quotation.initialize({
     type: DataTypes.TEXT,
   },
   paymentTerms: {
-    type: DataTypes.ARRAY(DataTypes.TEXT),
+    type: DataTypes.TEXT,
   },
   termsAndConditions: {
     type: DataTypes.ARRAY(DataTypes.TEXT),
