@@ -14,6 +14,12 @@ router
   );
 
 router
+  .route("/update-status/:id")
+  .put(
+    asyncHandler(QuotationController.updateStatus.bind(QuotationController)),
+  );
+
+router
   .route("/:id?")
   .get(asyncHandler(QuotationController.get.bind(QuotationController)))
   .post(asyncHandler(QuotationController.create.bind(QuotationController)))

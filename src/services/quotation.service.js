@@ -1,7 +1,10 @@
+import httpStatus from "http-status";
+import AppError from "#utils/appError";
 import BaseService from "#services/base";
 import LeadService from "#services/lead";
 import Quotation from "#models/quotation";
 import LedgerService from "#services/ledger";
+import PackingService from "#services/packing";
 
 class QuotationService extends BaseService {
   static Model = Quotation;
@@ -29,6 +32,75 @@ class QuotationService extends BaseService {
       ledgers,
       leads,
     };
+  }
+
+  static async update(id, updates) {
+    const quotation = await this.Model.findDocById(id);
+    if ("status" in updates && quotation.status !== updates.status) {
+      throw new AppError({
+        status: false,
+        message: "Cannot update quotation status from here",
+        httpStatus: httpStatus.FORBIDDEN,
+      });
+    }
+
+    if (quotation.status !== "Pending") {
+      throw new AppError({
+        status: false,
+        message: `Cannot update, quotation is already ${quotation.status}`,
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    quotation.updateFields(updates);
+    await quotation.save();
+    return quotation;
+  }
+
+  static async updateStatus(id, updates) {
+    const { status } = updates;
+
+    const quotation = await this.Model.findDocById(id);
+
+    if (status === quotation.status) {
+      return quotation;
+    }
+
+    if (quotation.status === "Cancelled") {
+      throw new AppError({
+        status: false,
+        message: "Cannot update status, quotation is already cancelled",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    if (quotation.packed) {
+      throw new AppError({
+        status: false,
+        message: "Cannot update a packed quotation",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    if (quotation.status === "Approved") {
+      const existingPacking = await PackingService.getDoc(
+        { quotationId: id },
+        true,
+      );
+
+      if (existingPacking) {
+        throw new AppError({
+          status: false,
+          message:
+            "An active packing already exist for quotation, cannot update status",
+          httpStatus: httpStatus.BAD_REQUEST,
+        });
+      }
+    }
+
+    quotation.status = status;
+    await quotation.save();
+    return quotation;
   }
 }
 

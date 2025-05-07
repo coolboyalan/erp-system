@@ -1,3 +1,4 @@
+import User from "#models/user";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
 import Quotation from "#models/quotation";

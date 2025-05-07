@@ -64,6 +64,28 @@ class QuotationController extends BaseController {
     const data = await this.Service.getBaseFields();
     sendResponse(httpStatus.OK, res, data);
   }
+
+  static async update(req, res, next) {
+    const { id } = req.params;
+    const data = await this.Service.update(id, req.body);
+    sendResponse(
+      httpStatus.OK,
+      res,
+      data,
+      `${this.Service.Model.updatedName()} updated successfully`,
+    );
+  }
+
+  static async updateStatus(req, res, next) {
+    const { id } = req.params;
+    const data = await this.Service.updateStatus(id, req.body);
+    sendResponse(
+      httpStatus.OK,
+      res,
+      data,
+      `${this.Service.Model.updatedName()} status updated successfully`,
+    );
+  }
 }
 
 export default QuotationController;
