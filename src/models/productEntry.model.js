@@ -47,6 +47,11 @@ ProductEntry.initialize(
       },
       allowNull: false,
     },
+    history: {
+      type: DataTypes.JSON,
+      defaultValue: "[]",
+      allowNull: false,
+    },
   },
   {
     indexes: [

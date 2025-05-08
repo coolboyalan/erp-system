@@ -1,5 +1,6 @@
 import LeadService from "#services/lead";
 import BaseController from "#controllers/base";
+import httpStatus from "http-status";
 import { sendResponse } from "#utils/response";
 
 class LeadController extends BaseController {

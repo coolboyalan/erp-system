@@ -1,48 +1,26 @@
-import httpStatus, { status } from "http-status";
+import { Op } from "sequelize";
 import BinService from "#services/bin";
 import { QueryTypes } from "sequelize";
 import AppError from "#utils/appError";
 import BaseService from "#services/base";
 import sequelize from "#configs/database";
+import httpStatus, { status } from "http-status";
+import { session } from "#middlewares/requestSession";
 import TransferMaterial from "#models/transferMaterial";
 import ProductEntryService from "#services/productEntry";
-import { session } from "#middlewares/requestSession";
 
 class TransferMaterialService extends BaseService {
   static Model = TransferMaterial;
-
-  static async bulkUpdateBinIds(productEntries, products, transaction) {
-    const updates = [];
-
-    for (let i = 0; i < productEntries.length; i++) {
-      const entries = productEntries[i];
-      const toBinId = products[i]?.toBinId;
-
-      for (const entry of entries) {
-        updates.push({ id: entry.id, toBinId });
-      }
-    }
-
-    if (updates.length === 0) return;
-
-    const updateSql = `
-    UPDATE "ProductEntries"
-    SET "binId" = CASE
-      ${updates.map((u) => `WHEN id = ${u.id} THEN ${u.toBinId}`).join("\n")}
-    END
-    WHERE id IN (${updates.map((u) => u.id).join(", ")})
-  `;
-
-    await this.Model.sequelize.query(updateSql, {
-      transaction: session.get("transaction"),
-    });
-  }
 
   static async create(data) {
     const { products, from, to } = data;
     const { Model: ProductEntry } = ProductEntryService;
 
     const productEntries = [];
+
+    // Mark as internal if from == to
+    const internal = from === to;
+    data.internal = internal;
 
     // Collect the product entries for later bulk update
     for (const entry of products) {
@@ -65,9 +43,11 @@ class TransferMaterialService extends BaseService {
       for (let i = 0; i < productEntries.length; i++) {
         const entries = productEntries[i];
         const toBinId = products[i]?.toBinId;
+        const fromBinId = products[i]?.fromBinId;
+        const productId = products[i]?.productId;
 
         for (const entry of entries) {
-          updates.push({ id: entry.id, toBinId });
+          updates.push({ id: entry.id, toBinId, fromBinId, productId });
         }
       }
 
@@ -75,15 +55,15 @@ class TransferMaterialService extends BaseService {
         const updateSql = `
         UPDATE "ProductEntries"
         SET "binId" = CASE
-          ${updates.map((u) => `WHEN id = ${u.id} THEN ${u.toBinId}`).join("\n")}
+          ${updates.map((u) => `WHEN id = ${u.id} THEN ${internal ? u.toBinId : "NULL::INTEGER"}`).join("\n")}
         END
         WHERE id IN (${updates.map((u) => u.id).join(", ")})
       `;
         await ProductEntry.sequelize.query(updateSql, { transaction: t });
       }
 
-      // Mark as internal if from == to
-      data.internal = from === to;
+      data.entries = updates;
+      data.stockTransferred = internal;
 
       // Create the transfer entry
       await super.create({ ...data }, { transaction: t });
@@ -133,11 +113,12 @@ class TransferMaterialService extends BaseService {
     	to_bin.name AS "toBinName",
     	prod.name AS "productName",
 		prod.id AS "productId",
+		(product->>'id')::int AS "productEntryId",
     	from_bin.name AS "fromBinName",
     	(product->>'barCode') AS barCode
   	FROM "TransferMaterials" t
   	CROSS JOIN LATERAL json_array_elements(t.products) AS product
-  	JOIN "Bins" to_bin ON (product->>'toBinId')::int = to_bin.id
+  	LEFT JOIN "Bins" to_bin ON (product->>'toBinId')::int = to_bin.id
   	JOIN "Bins" from_bin ON (product->>'fromBinId')::int = from_bin.id
   	JOIN "Products" prod ON (product->>'productId')::int = prod.id
   	JOIN "Warehouses" fromData ON t.from = fromData.id
@@ -153,7 +134,7 @@ class TransferMaterialService extends BaseService {
       throw new AppError({
         status: false,
         message: "Transfer record not found",
-        httpStatus: httpStatus.BAD_REQUEST,
+        httpStatus: httpStatus.NOT_FOUND,
       });
     }
 
@@ -166,6 +147,74 @@ class TransferMaterialService extends BaseService {
     };
 
     return response;
+  }
+
+  static async update(id, data) {
+    const transferDoc = await this.Model.findDoc({
+      id,
+      internal: false,
+      stockTransferred: false,
+    });
+
+    const { products } = transferDoc;
+    const { products: newProducts, indexes } = data;
+
+    const entryIds = products.map((ele) => {
+      return ele.id;
+    });
+
+    const entries = await ProductEntryService.Model.findAll({
+      where: {
+        id: {
+          [Op.in]: entryIds,
+        },
+        markedForPacking: false,
+        packed: false,
+        binId: null,
+      },
+      attributes: ["id", "binId"],
+    });
+
+    if (entries.length !== products.length) {
+      throw new AppError({
+        status: false,
+        message: "Product quantity mismatch",
+        httpStatus: httpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+
+    for (const product of newProducts) {
+      const original = products[indexes[product.id]];
+
+      if (!product.toBinId) {
+        throw new AppError({
+          status: false,
+          message: "Please provide a bin id to initiate the transfer",
+          httpStatus: httpStatus.BAD_REQUEST,
+        });
+      }
+
+      original.binId = product.toBinId;
+    }
+
+    if (newProducts.length > 0) {
+      const updateSql = `
+        UPDATE "ProductEntries"
+        SET "binId" = CASE
+          ${newProducts.map((u) => `WHEN id = ${u.id} THEN ${u.toBinId}`).join("\n")}
+        END
+        WHERE id IN (${newProducts.map((u) => u.id).join(", ")})
+      `;
+
+      const transaction = session.get("transaction");
+      await ProductEntryService.Model.sequelize.query(updateSql, {
+        transaction,
+      });
+    }
+
+    transferDoc.set("products", products);
+    transferDoc.set("stockTransferred", true);
+    await transferDoc.save();
   }
 }
 

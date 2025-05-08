@@ -33,6 +33,14 @@ TransferMaterial.initialize({
     defaultValue: true,
     allowNull: false,
   },
+  entries: {
+    type: DataTypes.JSON,
+  },
+  stockTransferred: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  },
 });
 
 export default TransferMaterial;

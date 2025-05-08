@@ -16,7 +16,7 @@ const server = express();
 await sequelize.authenticate();
 // await sequelize.sync({ alter: true });
 
-//Request logging middleware
+// Request logging middleware
 server.use(morgan(logger));
 
 //CORS
