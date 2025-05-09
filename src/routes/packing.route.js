@@ -8,6 +8,10 @@ const router = express.Router();
 router.use(authentication);
 
 router
+  .route("/barcodes")
+  .get(asyncHandler(PackingController.getBarcodes.bind(PackingController)));
+
+router
   .route("/:id?")
   .get(asyncHandler(PackingController.get.bind(PackingController)))
   .post(asyncHandler(PackingController.create.bind(PackingController)))

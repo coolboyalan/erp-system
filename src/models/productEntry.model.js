@@ -1,8 +1,10 @@
 import Bin from "#models/bin";
 import BaseModel from "#models/base";
+import Packing from "#models/packing";
 import { DataTypes } from "sequelize";
 import Product from "#models/product";
 import Purchase from "#models/purchase";
+import Quotation from "#models/quotation";
 
 class ProductEntry extends BaseModel {}
 
@@ -47,6 +49,20 @@ ProductEntry.initialize(
       },
       allowNull: false,
     },
+    packingId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Packing,
+        key: Packing.primaryKeyAttribute,
+      },
+    },
+    quotationId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Quotation,
+        key: Quotation.primaryKeyAttribute,
+      },
+    },
     history: {
       type: DataTypes.JSON,
       defaultValue: "[]",
@@ -69,6 +85,9 @@ ProductEntry.initialize(
       },
       {
         fields: ["productId", "packed"],
+      },
+      {
+        fields: ["packingId"],
       },
     ],
   },
