@@ -10,6 +10,11 @@ class PackingController extends BaseController {
     const data = await this.Service.getBarCodes(req.query);
     sendResponse(httpStatus.OK, res, data);
   }
+
+  static async getBaseFields(req, res, next) {
+    const data = await this.Service.getBaseFields();
+    sendResponse(httpStatus.OK, res, data);
+  }
 }
 
 export default PackingController;

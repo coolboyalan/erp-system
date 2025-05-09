@@ -7,12 +7,43 @@ import BaseService from "#services/base";
 import WarehouseService from "#services/warehouse";
 import QuotationService from "#services/quotation";
 import ProductEntryService from "#services/productEntry";
+import { session } from "#middlewares/requestSession";
 
 class PackingService extends BaseService {
   static Model = Packing;
 
+  static async getBaseFields() {
+    const warehouseData = WarehouseService.get(
+      null,
+      { pagination: "false" },
+      { fields: ["id"] },
+    );
+
+    const quotationData = QuotationService.get(
+      null,
+      {
+        pagination: "false",
+        status: "Approved",
+        inPacking: false,
+        packed: false,
+      },
+      { fields: ["id"] },
+    );
+
+    const [quotations, warehouses] = await Promise.all([
+      quotationData,
+      warehouseData,
+    ]);
+
+    return {
+      quotations,
+      warehouses,
+    };
+  }
+
   static async create(data) {
-    const { quotationId, warehouseId, products: newProducts } = data;
+    data.userId = 1;
+    const { quotationId, warehouseId, productData: newProducts } = data;
     const quotationData = QuotationService.getDocById(quotationId);
 
     const binData = BinService.get(
@@ -21,17 +52,7 @@ class PackingService extends BaseService {
       { fields: ["id", "name"] },
     );
 
-    const existingPackingsData = this.Model.findAll({
-      where: {
-        quotationId,
-      },
-    });
-
-    const [quotation, bins, existingPackings] = await Promise.all([
-      quotationData,
-      binData,
-      existingPackingsData,
-    ]);
+    const [quotation, bins] = await Promise.all([quotationData, binData]);
 
     const { products } = quotation;
     const maxQuantity = {};
@@ -61,20 +82,20 @@ class PackingService extends BaseService {
       }
     }
 
-    const entires = await ProductEntryService.Model.findAll({
+    const entries = await ProductEntryService.Model.findAll({
       where: {
         id: {
           [Op.in]: entryIds,
         },
         binId: {
-          [Op.in]: bins,
+          [Op.in]: binIds,
         },
         packed: false,
         markedForPacking: false,
       },
     });
 
-    if (entires.length !== entryIds) {
+    if (entries.length !== entryIds.length) {
       throw new AppError({
         status: false,
         message: "Product quantity mismatch",
@@ -85,6 +106,7 @@ class PackingService extends BaseService {
     let quantity = 0;
 
     products.forEach((ele) => {
+      if (!(ele.id in newProducts)) return;
       ele.maxQuantity -= newProducts[ele.id].length;
       if (ele.maxQuantity < 0) {
         throw new AppError({
@@ -97,10 +119,12 @@ class PackingService extends BaseService {
       quantity += ele.maxQuantity;
     });
 
-    quotation.set("products", products);
-    await quotation.save();
+    const packing = await super.create(data);
 
-    const packing = await super.create();
+    await QuotationService.Model.update(
+      { products, ...(quantity ? {} : { packed: true }), inPacking: true },
+      { where: { id: quotation.id } },
+    );
 
     const [updatedCount] = await ProductEntryService.Model.update(
       {
@@ -118,6 +142,7 @@ class PackingService extends BaseService {
           packingId: null,
           quotationId: null,
         },
+        transaction: session.get("transaction"),
       },
     );
 

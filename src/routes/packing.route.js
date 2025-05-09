@@ -12,6 +12,10 @@ router
   .get(asyncHandler(PackingController.getBarcodes.bind(PackingController)));
 
 router
+  .route("/base-fields")
+  .get(asyncHandler(PackingController.getBaseFields.bind(PackingController)));
+
+router
   .route("/:id?")
   .get(asyncHandler(PackingController.get.bind(PackingController)))
   .post(asyncHandler(PackingController.create.bind(PackingController)))
