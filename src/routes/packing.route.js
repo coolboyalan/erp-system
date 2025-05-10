@@ -16,6 +16,10 @@ router
   .get(asyncHandler(PackingController.getBaseFields.bind(PackingController)));
 
 router
+  .route("/update-status/:id")
+  .put(asyncHandler(PackingController.updateStatus.bind(PackingController)));
+
+router
   .route("/:id?")
   .get(asyncHandler(PackingController.get.bind(PackingController)))
   .post(asyncHandler(PackingController.create.bind(PackingController)))

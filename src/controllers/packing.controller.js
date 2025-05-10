@@ -36,6 +36,15 @@ class PackingController extends BaseController {
         {
           from: "Ledgers",
           as: "ledgerData",
+          localField: "ledgerId",
+          foreignField: "id",
+          via: "quotationData",
+        },
+        {
+          from: "Users",
+          as: "userData",
+          localField: "userId",
+          foreignField: "id",
         },
       ],
       fields: [
@@ -45,11 +54,24 @@ class PackingController extends BaseController {
         "packingDate",
         "createdAt",
         "warehouseData.name AS warehouseName",
+        "ledgerData.companyName AS customerName",
+        "userData.name AS packedByName",
       ],
     };
 
     const data = await this.Service.get(id, filters, options);
     sendResponse(httpStatus.OK, res, data);
+  }
+
+  static async updateStatus(req, res, next) {
+    const { id } = req.params;
+    const data = await this.Service.updateStatus(id, req.body);
+    sendResponse(
+      httpStatus.OK,
+      res,
+      data,
+      "Packing status updated successfully",
+    );
   }
 }
 

@@ -1,13 +1,14 @@
 import httpStatus from "http-status";
 import Packing from "#models/packing";
 import AppError from "#utils/appError";
-import { QueryTypes, Op } from "sequelize";
 import BinService from "#services/bin";
 import BaseService from "#services/base";
+import { QueryTypes, Op } from "sequelize";
+import InvoiceService from "#services/invoice";
 import WarehouseService from "#services/warehouse";
 import QuotationService from "#services/quotation";
-import ProductEntryService from "#services/productEntry";
 import { session } from "#middlewares/requestSession";
+import ProductEntryService from "#services/productEntry";
 
 class PackingService extends BaseService {
   static Model = Packing;
@@ -119,6 +120,8 @@ class PackingService extends BaseService {
       quantity += ele.maxQuantity;
     });
 
+    data.products = newProducts;
+
     const packing = await super.create(data);
 
     await QuotationService.Model.update(
@@ -226,6 +229,98 @@ class PackingService extends BaseService {
     }
 
     return grouped;
+  }
+
+  static async updateStatus(id, data) {
+    const packing = await this.Model.findDocById(id);
+    const { packed } = packing;
+
+    if (packed) {
+      throw new AppError({
+        status: false,
+        message: "This is already packed",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    packing.packed = true;
+
+    const quotation = await QuotationService.getDocById(packing.quotationId);
+
+    quotation.inPacking = false;
+    await quotation.save();
+
+    await packing.save();
+    return packing;
+  }
+
+  static async deleteDoc(id) {
+    const packing = await this.Model.findDocById(id);
+
+    const existingInvoice = await InvoiceService.getDoc(
+      { packingId: id },
+      true,
+    );
+
+    if (existingInvoice) {
+      throw new AppError({
+        status: false,
+        message: "Invoice for this packing already exists please remove data",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    const quotation = await QuotationService.getDocById(packing.quotationId);
+
+    const entryIds = [];
+    const { products } = packing;
+
+    for (const i in products) {
+      const ele = products[i];
+      ele.forEach((id) => entryIds.push(id));
+    }
+
+    const { products: newProducts } = quotation;
+
+    newProducts.forEach((ele) => {
+      if (!(ele.id in products)) return;
+      ele.maxQuantity += products[ele.id].length;
+    });
+
+    await ProductEntryService.Model.update(
+      {
+        markedForPacking: false,
+        packingId: null,
+        quotationId: null,
+      },
+      {
+        where: {
+          id: {
+            [Op.in]: entryIds,
+          },
+        },
+        transaction: session.get("transaction"),
+      },
+    );
+
+    await QuotationService.Model.update(
+      {
+        products: newProducts,
+        inPacking: false,
+        packed: false,
+      },
+      {
+        where: {
+          id: quotation.id,
+        },
+        transaction: session.get("transaction"),
+      },
+    );
+
+    await packing.destroy({
+      force: true,
+      transaction: session.get("transaction"),
+    });
   }
 }
 
