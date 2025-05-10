@@ -143,11 +143,15 @@ class BaseModel extends Model {
     const limitSQL =
       pagination !== "false" ? `LIMIT ${limit} OFFSET ${offset}` : "";
 
-    // Join Clauses
+    // Join Clauses (supporting chained joins via `via`)
     let joinClauses = "";
+    const lookupAliases = new Set(); // For field quoting
+
     if (lookups && Array.isArray(lookups)) {
-      lookups.forEach(({ from, as, localField, foreignField }) => {
-        joinClauses += ` LEFT JOIN "${from}" AS "${as}" ON "${tableName}"."${localField}" = "${as}"."${foreignField}"`;
+      lookups.forEach(({ from, as, localField, foreignField, via }) => {
+        const source = via || tableName;
+        joinClauses += ` LEFT JOIN "${from}" AS "${as}" ON "${source}"."${localField}" = "${as}"."${foreignField}"`;
+        lookupAliases.add(as);
       });
     }
 
@@ -160,9 +164,8 @@ class BaseModel extends Model {
       // Handle aliasing with "AS"
       if (/\s+AS\s+/i.test(field)) {
         const [rawField, alias] = field.split(/\s+AS\s+/i);
-        const quotedField = autoQuoteField(rawField, tableName);
+        const quotedField = autoQuoteField(rawField);
 
-        // Quote alias if it contains any uppercase letters
         const quotedAlias = /[A-Z]/.test(alias) ? `"${alias}"` : alias;
         return `${quotedField} AS ${quotedAlias}`;
       }
@@ -175,6 +178,16 @@ class BaseModel extends Model {
       // Handle table.field pattern
       if (/^[a-zA-Z_]+\.[a-zA-Z_]+$/.test(field)) {
         const [table, col] = field.split(".");
+
+        // Validate table alias
+        if (table !== tableName && !lookupAliases.has(table)) {
+          throw new AppError({
+            status: false,
+            message: `Invalid table alias in field: "${field}"`,
+            httpStatus: httpStatus.BAD_REQUEST,
+          });
+        }
+
         return `"${table}"."${col}"`;
       }
 
