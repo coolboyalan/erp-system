@@ -40,6 +40,39 @@ class InvoiceController extends BaseController {
 
     sendResponse(httpStatus.OK, res, packings);
   }
+
+  static async get(req, res, next) {
+    const { id } = req.params;
+
+    const options = {
+      fields: [
+        "id",
+        "packingId",
+        "referenceNo",
+        "invoiceDate",
+        "createdAt",
+        "userData.name AS preparedBy",
+        "ledgerData.companyName AS customerName",
+      ],
+      lookups: [
+        {
+          from: "Ledgers",
+          as: "ledgerData",
+          localField: "ledgerId",
+          foreignField: "id",
+        },
+        {
+          from: "Users",
+          as: "userData",
+          localField: "userId",
+          foreignField: "id",
+        },
+      ],
+    };
+
+    const data = await this.Service.get(id, req.query, options);
+    sendResponse(httpStatus.OK, res, data, "Invoices fetched successfully");
+  }
 }
 
 export default InvoiceController;

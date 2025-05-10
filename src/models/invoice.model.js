@@ -1,6 +1,7 @@
 import User from "#models/user";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
+import Ledger from "#models/ledger";
 
 class Invoice extends BaseModel {}
 
@@ -21,7 +22,10 @@ Invoice.initialize({
   ledgerId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {},
+    references: {
+      model: Ledger,
+      key: Ledger.primaryKeyAttribute,
+    },
   },
   invoiceDate: {
     type: DataTypes.DATE,

@@ -1,17 +1,23 @@
 import Invoice from "#models/invoice";
 import BaseService from "#services/base";
 import PackingService from "#services/packing";
+import QuotationService from "#services/quotation";
+import { session } from "#middlewares/requestSession";
 
 class InvoiceService extends BaseService {
   static Model = Invoice;
 
   static async create(data) {
     const { packingId } = data;
+    data.userId = 1;
     const packing = await PackingService.getDoc({
       id: packingId,
       packed: true,
       invoiceId: null,
     });
+
+    const quotation = await QuotationService.getDocById(packing.quotationId);
+    data.ledgerId = quotation.ledgerId;
 
     const invoice = await super.create(data);
 
@@ -25,7 +31,10 @@ class InvoiceService extends BaseService {
 
     packing.invoiceId = null;
     await packing.save();
-    await invoice.destroy({ force: true });
+    await invoice.destroy({
+      force: true,
+      transaction: session.get("transaction"),
+    });
   }
 }
 

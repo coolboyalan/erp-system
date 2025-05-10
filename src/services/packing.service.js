@@ -243,6 +243,15 @@ class PackingService extends BaseService {
       });
     }
 
+    if (packing.invoiceId) {
+      throw new AppError({
+        status: false,
+        message:
+          "Invoice for this packing already exists, please remove that first",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
     packing.packed = true;
 
     const quotation = await QuotationService.getDocById(packing.quotationId);
@@ -256,6 +265,15 @@ class PackingService extends BaseService {
 
   static async deleteDoc(id) {
     const packing = await this.Model.findDocById(id);
+
+    if (packing.invoiceId) {
+      throw new AppError({
+        status: false,
+        message:
+          "Invoice for this packing already exists, please remove that first",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
 
     const existingInvoice = await InvoiceService.getDoc(
       { packingId: id },
