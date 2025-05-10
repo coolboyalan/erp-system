@@ -107,6 +107,7 @@ class PackingService extends BaseService {
     let quantity = 0;
 
     products.forEach((ele) => {
+      quantity += ele.maxQuantity;
       if (!(ele.id in newProducts)) return;
       ele.maxQuantity -= newProducts[ele.id].length;
       if (ele.maxQuantity < 0) {
@@ -116,8 +117,6 @@ class PackingService extends BaseService {
           httpStatus: httpStatus.INTERNAL_SERVER_ERROR,
         });
       }
-
-      quantity += ele.maxQuantity;
     });
 
     data.products = newProducts;
