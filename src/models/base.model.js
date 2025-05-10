@@ -105,8 +105,13 @@ class BaseModel extends Model {
       }
 
       const paramKey = `filter_${key}`;
-      whereClauses.push(`"${tableName}"."${key}" = :${paramKey}`);
-      replacements[paramKey] = filters[key];
+
+      if (filters[key] === null) {
+        whereClauses.push(`"${tableName}"."${key}" IS NULL`);
+      } else {
+        whereClauses.push(`"${tableName}"."${key}" = :${paramKey}`);
+        replacements[paramKey] = filters[key];
+      }
     });
 
     // Search key validation
