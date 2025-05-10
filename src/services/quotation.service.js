@@ -5,6 +5,7 @@ import LeadService from "#services/lead";
 import Quotation from "#models/quotation";
 import LedgerService from "#services/ledger";
 import PackingService from "#services/packing";
+import { session } from "#middlewares/requestSession";
 
 class QuotationService extends BaseService {
   static Model = Quotation;
@@ -101,6 +102,21 @@ class QuotationService extends BaseService {
     quotation.status = status;
     await quotation.save();
     return quotation;
+  }
+
+  static async deleteDoc(id) {
+    const doc = await this.Model.findDocById(id);
+
+    const packing = await PackingService.getDoc({ quotationId: id }, true);
+    if (packing) {
+      throw new AppError({
+        status: false,
+        message: "An active packing for this quotation already exists",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    await doc.destroy({ force: true, transaction: session.get("transaction") });
   }
 }
 
