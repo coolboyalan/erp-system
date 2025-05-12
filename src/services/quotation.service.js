@@ -120,6 +120,7 @@ class QuotationService extends BaseService {
           landmark: lead.landmark,
           streetAddress: lead.streetAddress,
         });
+        quotation.ledgerId = ledger.id;
       }
     }
     await quotation.save();
