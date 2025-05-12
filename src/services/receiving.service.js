@@ -1,22 +1,22 @@
 import dayjs from "dayjs";
-import Payment from "#models/payment";
 import BaseService from "#services/base";
+import Receiving from "#models/receiving";
 import { Op, fn, col, literal } from "sequelize";
 import { session } from "#middlewares/requestSession";
 
-class PaymentService extends BaseService {
-  static Model = Payment;
+class ReceivingService extends BaseService {
+  static Model = Receiving;
 
   static async deleteDoc(id) {
     const doc = await this.Model.findDocById(id);
     await doc.destroy({ force: true, transaction: session.get("transaction") });
   }
 
-  static async getLedgerPaymentSummary(ledgerId) {
+  static async getLedgerReceivingSummary(ledgerId) {
     const now = dayjs();
 
     const todayStart = now.startOf("day").toDate();
-    const weekStart = now.startOf("week").toDate(); // Sunday
+    const weekStart = now.startOf("week").toDate();
     const monthStart = now.startOf("month").toDate();
     const yearStart = now.startOf("year").toDate();
 
@@ -25,7 +25,7 @@ class PaymentService extends BaseService {
       where: {
         ledgerId,
         ...(startDate && {
-          paymentDate: {
+          receivingDate: {
             [Op.gte]: startDate,
           },
         }),
@@ -34,11 +34,11 @@ class PaymentService extends BaseService {
     });
 
     const [total, today, week, month, year] = await Promise.all([
-      Payment.findOne(buildQuery()),
-      Payment.findOne(buildQuery(todayStart)),
-      Payment.findOne(buildQuery(weekStart)),
-      Payment.findOne(buildQuery(monthStart)),
-      Payment.findOne(buildQuery(yearStart)),
+      Receiving.findOne(buildQuery()),
+      Receiving.findOne(buildQuery(todayStart)),
+      Receiving.findOne(buildQuery(weekStart)),
+      Receiving.findOne(buildQuery(monthStart)),
+      Receiving.findOne(buildQuery(yearStart)),
     ]);
 
     return {
@@ -51,4 +51,4 @@ class PaymentService extends BaseService {
   }
 }
 
-export default PaymentService;
+export default ReceivingService;

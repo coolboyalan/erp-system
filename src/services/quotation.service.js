@@ -11,7 +11,7 @@ class QuotationService extends BaseService {
   static Model = Quotation;
 
   static async create(data) {
-    data.userId = 1;
+    data.userId = session.get("userId");
     return await super.create(data);
   }
 
@@ -100,6 +100,18 @@ class QuotationService extends BaseService {
     }
 
     quotation.status = status;
+    // if (!quotation.ledgerId && quotation.status === "Approved") {
+    //   const lead = await LeadService.getDocById(quotation.leadId);
+    //   let ledger = await LedgerService.getDoc({ email: lead.email }, true);
+    //   if (ledger) {
+    //     quotation.ledgerId = ledger.id;
+    //   } else {
+    //     ledger = await LedgerService.create({
+    //       companyName: lead.name,
+    //       contactName: lead.name,
+    //     });
+    //   }
+    // }
     await quotation.save();
     return quotation;
   }

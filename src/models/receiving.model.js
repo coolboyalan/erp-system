@@ -1,12 +1,12 @@
 import Ledger from "#models/ledger";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
-import Purchase from "#models/purchase";
+import Invoice from "#models/invoice";
 
-class Payment extends BaseModel {
-  static paymentTypeArr = ["Purchase", "Sale Return"];
+class Receiving extends BaseModel {
+  static receivingTypeArr = ["Sale", "Purchase Return"];
 
-  static paymentMethodArr = [
+  static receivingMethodArr = [
     "Cash",
     "Credit Card",
     "Debit Card",
@@ -15,9 +15,9 @@ class Payment extends BaseModel {
   ];
 }
 
-Payment.initialize({
+Receiving.initialize({
   type: {
-    type: DataTypes.ENUM(Payment.paymentTypeArr),
+    type: DataTypes.ENUM(Receiving.receivingTypeArr),
     allowNull: false,
   },
   ledgerId: {
@@ -28,14 +28,14 @@ Payment.initialize({
       key: Ledger.primaryKeyAttribute,
     },
   },
-  purchaseId: {
+  invoiceId: {
     type: DataTypes.INTEGER,
     references: {
-      model: Purchase,
-      key: Purchase.primaryKeyAttribute,
+      model: Invoice,
+      key: Invoice.primaryKeyAttribute,
     },
   },
-  saleReturnId: {
+  purchaseReturnId: {
     type: DataTypes.INTEGER,
   },
   referenceNo: {
@@ -46,14 +46,14 @@ Payment.initialize({
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
-  paymentMethod: {
-    type: DataTypes.ENUM(Payment.paymentMethodArr),
+  receivingMethod: {
+    type: DataTypes.ENUM(Receiving.receivingMethodArr),
     allowNull: false,
   },
   remarks: {
     type: DataTypes.STRING,
   },
-  paymentDate: {
+  receivingDate: {
     type: DataTypes.DATE,
     allowNull: false,
   },
@@ -62,4 +62,4 @@ Payment.initialize({
   },
 });
 
-export default Payment;
+export default Receiving;

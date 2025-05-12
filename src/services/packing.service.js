@@ -43,7 +43,7 @@ class PackingService extends BaseService {
   }
 
   static async create(data) {
-    data.userId = 1;
+    data.userId = session.get("userId");
     const { quotationId, warehouseId, productData: newProducts } = data;
     const quotationData = QuotationService.getDocById(quotationId);
 

@@ -1,25 +1,14 @@
-import PaymentService from "#services/payment";
-import BaseController from "#controllers/base";
-import LedgerService from "#services/ledger";
-import { sendResponse } from "#utils/response";
 import httpStatus from "http-status";
+import BaseController from "#controllers/base";
+import { sendResponse } from "#utils/response";
+import ReceivingService from "#services/receiving";
 
-class PaymentController extends BaseController {
-  static Service = PaymentService;
-
-  static async getBaseFields(req, res, next) {
-    const fields = ["id", "companyName AS name", "email"];
-    const data = await LedgerService.get(
-      null,
-      { pagination: "false" },
-      { fields },
-    );
-    sendResponse(httpStatus.OK, res, { ledgers: data });
-  }
+class ReceivingController extends BaseController {
+  static Service = ReceivingService;
 
   static async getTotal(req, res, next) {
     const { id } = req.params;
-    const data = await this.Service.getLedgerPaymentSummary(id);
+    const data = await this.Service.getLedgerReceivingSummary(id);
     sendResponse(httpStatus.OK, res, data);
   }
 
@@ -30,9 +19,9 @@ class PaymentController extends BaseController {
       "ledgerData.companyName AS customerName",
       "type",
       "amount",
-      "paymentDate",
+      "receivingDate",
       "createdAt",
-      "paymentMethod",
+      "receivingMethod",
       "referenceNo",
     ];
     const lookups = [
@@ -56,4 +45,4 @@ class PaymentController extends BaseController {
   }
 }
 
-export default PaymentController;
+export default ReceivingController;

@@ -9,7 +9,7 @@ class InvoiceService extends BaseService {
 
   static async create(data) {
     const { packingId } = data;
-    data.userId = 1;
+    data.userId = session.get("userId");
     const packing = await PackingService.getDoc({
       id: packingId,
       packed: true,

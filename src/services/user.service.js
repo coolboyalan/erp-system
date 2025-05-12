@@ -1,6 +1,9 @@
 import User from "#models/user";
+import { hash, compare } from "bcryptjs";
 import BaseService from "#services/base";
 import randomPassword from "#utils/password";
+import { createToken } from "#utils/jwt";
+import RoleService from "#services/role";
 
 class UserService extends BaseService {
   static Model = User;
@@ -39,6 +42,17 @@ class UserService extends BaseService {
     return await super.create(data);
   }
 
+  static async update(id, data) {
+    delete data.password;
+    return super.update(id, data);
+  }
+
+  static async changePassword(id, data) {
+    const { password } = data;
+    data.password = await bcrypt.hash(password, 10);
+    return await super.update(id, data);
+  }
+
   static async login(data) {
     const { email, phone, password } = data;
     let user = await this.Model.findDoc(email ? { email } : { phone });
@@ -65,6 +79,11 @@ class UserService extends BaseService {
     delete user.password;
     delete user.createdAt;
     delete user.updatedAt;
+
+    const role = await RoleService.get(user.roleId);
+
+    user.permissions = role.permissions;
+    console.log(role);
 
     return {
       token,
