@@ -100,18 +100,28 @@ class QuotationService extends BaseService {
     }
 
     quotation.status = status;
-    // if (!quotation.ledgerId && quotation.status === "Approved") {
-    //   const lead = await LeadService.getDocById(quotation.leadId);
-    //   let ledger = await LedgerService.getDoc({ email: lead.email }, true);
-    //   if (ledger) {
-    //     quotation.ledgerId = ledger.id;
-    //   } else {
-    //     ledger = await LedgerService.create({
-    //       companyName: lead.name,
-    //       contactName: lead.name,
-    //     });
-    //   }
-    // }
+    if (!quotation.ledgerId && quotation.status === "Approved") {
+      const lead = await LeadService.getDocById(quotation.leadId);
+      let ledger = await LedgerService.getDoc({ email: lead.email }, true);
+      if (ledger) {
+        quotation.ledgerId = ledger.id;
+      } else {
+        ledger = await LedgerService.create({
+          companyName: lead.companyName ?? lead.name,
+          contactName: lead.name,
+          ledgerType: "Customer",
+          assignedPerson: lead.assignedPerson,
+          phone: lead.phone,
+          email: lead.email,
+          countryId: lead.countryId,
+          stateId: lead.stateId,
+          cityId: lead.cityId,
+          pinCode: lead.pinCode,
+          landmark: lead.landmark,
+          streetAddress: lead.streetAddress,
+        });
+      }
+    }
     await quotation.save();
     return quotation;
   }
