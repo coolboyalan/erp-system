@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import BaseService from "#services/base";
 import randomPassword from "#utils/password";
 import { createToken } from "#utils/jwt";
+import AppError from "#utils/appError";
 import RoleService from "#services/role";
 
 class UserService extends BaseService {
