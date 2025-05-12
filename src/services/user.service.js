@@ -2,6 +2,7 @@ import User from "#models/user";
 import { hash, compare } from "bcryptjs";
 import bcrypt from "bcryptjs";
 import BaseService from "#services/base";
+import httpStatus from "http-status";
 import randomPassword from "#utils/password";
 import { createToken } from "#utils/jwt";
 import AppError from "#utils/appError";
