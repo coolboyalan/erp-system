@@ -2,6 +2,7 @@ import Ledger from "#models/ledger";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
 import Invoice from "#models/invoice";
+import User from "#models/user";
 
 class Receiving extends BaseModel {
   static receivingTypeArr = ["Sale", "Purchase Return"];
@@ -59,6 +60,14 @@ Receiving.initialize({
   },
   document: {
     type: DataTypes.TEXT,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: User.primaryKeyAttribute,
+    },
   },
 });
 

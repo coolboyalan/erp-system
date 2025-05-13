@@ -2,6 +2,7 @@ import Ledger from "#models/ledger";
 import BaseModel from "#models/base";
 import { DataTypes } from "sequelize";
 import Purchase from "#models/purchase";
+import User from "#models/user";
 
 class Payment extends BaseModel {
   static paymentTypeArr = ["Purchase", "Sale Return"];
@@ -59,6 +60,14 @@ Payment.initialize({
   },
   document: {
     type: DataTypes.TEXT,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: User.primaryKeyAttribute,
+    },
   },
 });
 
