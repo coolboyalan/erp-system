@@ -5,14 +5,25 @@ import LeadService from "#services/lead";
 import Quotation from "#models/quotation";
 import LedgerService from "#services/ledger";
 import PackingService from "#services/packing";
+import NotificationService from "#services/notification";
 import { session } from "#middlewares/requestSession";
+import UserService from "#services/user";
 
 class QuotationService extends BaseService {
   static Model = Quotation;
 
   static async create(data) {
     data.userId = session.get("userId");
-    return await super.create(data);
+    const quotation = await super.create(data);
+    const user = await UserService.getDocById(data.userId);
+
+    await NotificationService.create({
+      notification: `Quotation no ${quotation.id} created by ${user.name}${user.email ? `-${user.email}` : ""}`,
+      userId: data.userId,
+      adminId: data.userId,
+    });
+
+    return quotation;
   }
 
   static async getBaseFields() {
@@ -110,7 +121,7 @@ class QuotationService extends BaseService {
           companyName: lead.companyName ?? lead.name,
           contactName: lead.name,
           ledgerType: "Customer",
-          assignedPerson: lead.assignedPerson,
+          userId: lead.userId,
           phone: lead.phone,
           email: lead.email,
           countryId: lead.countryId,

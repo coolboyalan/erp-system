@@ -20,7 +20,7 @@ class LeadController extends BaseController {
         "age",
         "companyName",
         "createdAt",
-        "userData.name as assignedPersonName",
+        "userData.name as userName",
         "priorityLevel",
         "leadType",
       ];
@@ -29,7 +29,7 @@ class LeadController extends BaseController {
         {
           from: "Users",
           as: "userData",
-          localField: "assignedPerson",
+          localField: "userId",
           foreignField: "id",
         },
       ];

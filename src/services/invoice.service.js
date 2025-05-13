@@ -3,6 +3,8 @@ import BaseService from "#services/base";
 import PackingService from "#services/packing";
 import QuotationService from "#services/quotation";
 import { session } from "#middlewares/requestSession";
+import UserService from "#services/user";
+import NotificationService from "#services/notification";
 
 class InvoiceService extends BaseService {
   static Model = Invoice;
@@ -23,6 +25,14 @@ class InvoiceService extends BaseService {
 
     packing.invoiceId = invoice.id;
     await packing.save();
+
+    const user = await UserService.getDocById(data.userId);
+
+    await NotificationService.create({
+      notification: `Invoice no ${invoice.id} created by ${user.name}${user.email ? `-${user.email}` : ""}`,
+      userId: data.userId,
+      adminId: data.userId,
+    });
   }
 
   static async deleteDoc(id) {

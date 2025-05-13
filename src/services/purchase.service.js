@@ -5,6 +5,7 @@ import WarehouseService from "#services/warehouse";
 import ProductService from "#services/product";
 import AppError from "#utils/appError";
 import httpStatus from "http-status";
+import NotificationService from "#services/notification";
 
 class PurchaseService extends BaseService {
   static Model = Purchase;
@@ -86,11 +87,12 @@ class PurchaseService extends BaseService {
 
     await Promise.all(fetchedProducts);
 
-    //FIX: Remove default userId
-    data.userId = 3;
-
     data.movedToWarehouse = false;
-    return await super.create(data);
+    const purchase = await super.create(data);
+
+    await NotificationService.create({
+      notification: `Purchase no ${purchase.id} created by  `,
+    });
   }
 
   static async update(id, data) {

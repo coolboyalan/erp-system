@@ -67,7 +67,7 @@ Lead.initialize({
   priorityLevel: {
     type: DataTypes.ENUM(Lead.priorityEnumArr),
   },
-  assignedPerson: {
+  userId: {
     type: DataTypes.INTEGER,
     references: {
       model: User,

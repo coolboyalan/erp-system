@@ -1,8 +1,16 @@
+import { session } from "#middlewares/requestSession";
+
 class BaseService {
   static Model = null;
 
   static async get(id, filters, options = {}) {
     if (!id) {
+      const role = session.get("role");
+
+      // if (role !== "ADMIN") {
+      //   filters.userId = session.get("userId");
+      // }
+
       return await this.Model.find(filters, options);
     }
     return await this.Model.findDocById(id);

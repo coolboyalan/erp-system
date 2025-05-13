@@ -25,6 +25,7 @@ class UserController extends BaseController {
     loggedInUser = loggedInUser.toJSON();
 
     loggedInUser.permissions = role.permissions;
+    loggedInUser.roleName = role.name;
     sendResponse(httpStatus.OK, res, loggedInUser);
   }
 }

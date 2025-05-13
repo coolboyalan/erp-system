@@ -70,13 +70,6 @@ class UserService extends BaseService {
       });
     }
 
-    const payload = {
-      userId: user.id,
-      email,
-    };
-
-    const token = createToken(payload);
-
     user = user.toJSON();
 
     delete user.password;
@@ -86,7 +79,15 @@ class UserService extends BaseService {
     const role = await RoleService.get(user.roleId);
 
     user.permissions = role.permissions;
-    console.log(role);
+    user.roleName = role.name;
+
+    const payload = {
+      userId: user.id,
+      email,
+      role: role.name,
+    };
+
+    const token = createToken(payload);
 
     return {
       token,

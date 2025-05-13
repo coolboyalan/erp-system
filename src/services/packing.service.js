@@ -9,6 +9,8 @@ import WarehouseService from "#services/warehouse";
 import QuotationService from "#services/quotation";
 import { session } from "#middlewares/requestSession";
 import ProductEntryService from "#services/productEntry";
+import NotificationService from "#services/notification";
+import UserService from "#services/user";
 
 class PackingService extends BaseService {
   static Model = Packing;
@@ -155,6 +157,12 @@ class PackingService extends BaseService {
         httpStatus: httpStatus.BAD_REQUEST,
       });
     }
+
+    const user = await UserService.getDocById(packing.userId);
+
+    await NotificationService.create({
+      notification: `Packing no ${packing.id} created by user ${user.name}`,
+    });
 
     return packing;
   }

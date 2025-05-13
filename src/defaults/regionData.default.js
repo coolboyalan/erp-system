@@ -4,7 +4,7 @@ import State from "#models/state";
 import Country from "#models/country";
 import sequelize from "#configs/database";
 import { session } from "#middlewares/requestSession";
-import Admin from "#models/admin";
+import User from "#models/admin";
 
 const region = {
   "Andaman and Nicobar Islands": ["Port Blair"],
@@ -1286,10 +1286,10 @@ const region = {
   });
 })();
 
-(async function addAdmin() {
+(async function addUser() {
   session.run(async () => {
     try {
-      const admin = await Admin.findAll();
+      const admin = await User.findAll();
       if (admin.length) return;
 
       session.set("transaction", await sequelize.transaction());
@@ -1440,7 +1440,7 @@ const region = {
         },
       ];
 
-      const createdAdmin = await Admin.create({
+      const createdUser = await User.create({
         name: "admin",
         email: "johndoe@example.com",
         password: "password",

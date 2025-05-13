@@ -15,6 +15,8 @@ export const globalErrorHandler = async (error, req, res, next) => {
   const transaction = await session.get("transaction");
   if (transaction) await transaction.rollback();
 
+  console.log(error);
+
   // Handle validation errors
   if (error instanceof ValidationError) {
     return res.status(400).json({

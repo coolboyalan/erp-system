@@ -18,7 +18,7 @@ class LedgerController extends BaseController {
         "email",
         "phone",
         "companyName",
-        "userData.name AS assignedPersonName",
+        "userData.name AS userName",
         "createdAt",
       ];
 
@@ -26,7 +26,7 @@ class LedgerController extends BaseController {
         {
           from: "Users",
           as: "userData",
-          localField: "assignedPerson",
+          localField: "userId",
           foreignField: "id",
         },
       ];

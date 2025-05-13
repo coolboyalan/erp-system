@@ -22,7 +22,7 @@ Ledger.initialize({
     type: DataTypes.ENUM(Ledger.ledgerTypeEnumArr),
     allowNull: false,
   },
-  assignedPerson: {
+  userId: {
     type: DataTypes.INTEGER,
     references: {
       model: User,
