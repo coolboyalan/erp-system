@@ -10,7 +10,7 @@ class Lead extends BaseModel {
 
   static priorityEnumArr = ["Low", "Medium", "High"];
 
-  static leadTypeArr = ["Company", "Individual"];
+  static leadTypeArr = ["Company", "Individual","School"];
 }
 
 Lead.initialize({
