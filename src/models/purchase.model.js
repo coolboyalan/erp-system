@@ -36,7 +36,6 @@ Purchase.initialize(
     },
     purchaseNo: {
       type: DataTypes.STRING,
-      allowNull: false,
       //WARN: Unique
     },
     purchaseDate: {
