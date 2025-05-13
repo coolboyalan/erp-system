@@ -7,6 +7,11 @@ import { session } from "#middlewares/requestSession";
 class ReceivingService extends BaseService {
   static Model = Receiving;
 
+  static async create(data) {
+    data.userId = session.get("userId");
+    return await super.create(data);
+  }
+
   static async deleteDoc(id) {
     const doc = await this.Model.findDocById(id);
     await doc.destroy({ force: true, transaction: session.get("transaction") });
