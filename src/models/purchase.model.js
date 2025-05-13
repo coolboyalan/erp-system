@@ -34,11 +34,6 @@ Purchase.initialize(
       },
       allowNull: false,
     },
-    referenceNo: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      //WARN: UniqueNo
-    },
     purchaseNo: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -105,6 +100,12 @@ Purchase.initialize(
         fields: ["movedToWarehouse", "warehouseId"],
       },
     ],
+    hooks: {
+      async afterCreate(instance) {
+        instance.purchaseNo = `PO-${instance.id}`;
+        await instance.save();
+      },
+    },
   },
 );
 

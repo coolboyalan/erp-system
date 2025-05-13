@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+import { Op, fn, col } from "sequelize";
 import Invoice from "#models/invoice";
 import BaseService from "#services/base";
 import PackingService from "#services/packing";
@@ -46,6 +48,22 @@ class InvoiceService extends BaseService {
       transaction: session.get("transaction"),
     });
   }
-}
 
+  static async getTotalOutstanding(ledgerId) {
+    const result = await Invoice.findOne({
+      attributes: [
+        [fn("COALESCE", fn("SUM", col("netAmount")), 0), "totalOutstanding"],
+      ],
+      where: {
+        ledgerId,
+      },
+      raw: true,
+    });
+
+    return {
+      totalOutstanding: parseFloat(result.totalOutstanding),
+    };
+  }
+}
+InvoiceService.getTotalOutstanding(7).then((ele) => console.log(ele));
 export default InvoiceService;

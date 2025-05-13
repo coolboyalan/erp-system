@@ -162,6 +162,8 @@ class PackingService extends BaseService {
 
     await NotificationService.create({
       notification: `Packing no ${packing.id} created by user ${user.name}`,
+      userId: data.userId,
+      adminId: data.userId,
     });
 
     return packing;

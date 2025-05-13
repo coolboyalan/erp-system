@@ -6,6 +6,8 @@ import ProductService from "#services/product";
 import AppError from "#utils/appError";
 import httpStatus from "http-status";
 import NotificationService from "#services/notification";
+import { session } from "#middlewares/requestSession";
+import UserService from "#services/user";
 
 class PurchaseService extends BaseService {
   static Model = Purchase;
@@ -71,6 +73,7 @@ class PurchaseService extends BaseService {
 
   static async create(data) {
     const { products } = data;
+    data.userId = session.get("userId");
 
     if (!products.length) {
       throw new AppError({
@@ -90,8 +93,12 @@ class PurchaseService extends BaseService {
     data.movedToWarehouse = false;
     const purchase = await super.create(data);
 
+    const user = await UserService.getDocById(data.userId);
+
     await NotificationService.create({
-      notification: `Purchase no ${purchase.id} created by  `,
+      notification: `Purchase no ${purchase.id} created by ${user.name}${user.email ? `-${user.email}` : ""}`,
+      userId: data.userId,
+      adminId: data.userId,
     });
   }
 
