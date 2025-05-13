@@ -3,7 +3,6 @@ import BaseController from "#controllers/base";
 import PackingService from "#services/packing";
 import httpStatus from "http-status";
 import { sendResponse } from "#utils/response";
-import { Op } from "sequelize";
 
 class InvoiceController extends BaseController {
   static Service = InvoiceService;
@@ -39,6 +38,12 @@ class InvoiceController extends BaseController {
     );
 
     sendResponse(httpStatus.OK, res, packings);
+  }
+
+  static async getOutstanding(req, res, next) {
+    const { id } = req.params;
+    const data = await this.Service.getTotalOutstanding(id);
+    sendResponse(httpStatus.OK, res, data, "Outstanding fetched successfully");
   }
 
   static async get(req, res, next) {

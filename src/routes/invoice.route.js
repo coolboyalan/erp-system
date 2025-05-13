@@ -12,6 +12,10 @@ router
   .get(asyncHandler(InvoiceController.getBaseFields.bind(InvoiceController)));
 
 router
+  .route("/outstanding/:id")
+  .get(asyncHandler(InvoiceController.getOutstanding.bind(InvoiceController)));
+
+router
   .route("/:id?")
   .get(asyncHandler(InvoiceController.get.bind(InvoiceController)))
   .post(asyncHandler(InvoiceController.create.bind(InvoiceController)))

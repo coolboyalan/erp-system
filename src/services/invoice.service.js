@@ -65,5 +65,5 @@ class InvoiceService extends BaseService {
     };
   }
 }
-InvoiceService.getTotalOutstanding(7).then((ele) => console.log(ele));
+
 export default InvoiceService;
