@@ -114,6 +114,13 @@ class BaseModel extends Model {
       }
     });
 
+    // Add userId filter if the key exists in the model's attributes
+    if (attributes.userId && filters.userId) {
+      whereClauses.push(`"${tableName}"."userId" = :filter_userId`);
+      replacements.filter_userId = session.get("userId");
+      delete filters.userId;
+    }
+
     // Search key validation
     if (search && searchKey) {
       if (!attributes[searchKey] || !attributes[searchKey].searchable) {
@@ -203,20 +210,20 @@ class BaseModel extends Model {
 
     // Final Queries
     const dataQuery = `
-    SELECT ${quotedFields.join(",")}
-    FROM "${tableName}"
-    ${joinClauses}
-    ${whereSQL}
-    ${orderSQL}
-    ${limitSQL}
-  `;
+  SELECT ${quotedFields.join(",")}
+  FROM "${tableName}"
+  ${joinClauses}
+  ${whereSQL}
+  ${orderSQL}
+  ${limitSQL}
+`;
 
     const countQuery = `
-    SELECT COUNT(*) AS count
-    FROM "${tableName}"
-    ${joinClauses}
-    ${whereSQL}
-  `;
+  SELECT COUNT(*) AS count
+  FROM "${tableName}"
+  ${joinClauses}
+  ${whereSQL}
+`;
 
     const result = await this.sequelize.query(dataQuery, {
       replacements,
@@ -244,7 +251,6 @@ class BaseModel extends Model {
         }
       : result;
   }
-
   static async findDocById(id, allowNull = false) {
     this.idChecker(id);
 

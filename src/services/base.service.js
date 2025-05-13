@@ -7,9 +7,11 @@ class BaseService {
     if (!id) {
       const role = session.get("role");
 
-      // if (role !== "ADMIN") {
-      //   filters.userId = session.get("userId");
-      // }
+      if (role !== "ADMIN") {
+        if (this.Model.rawAttributes.hasOwnProperty("userId")) {
+          filters.userId = session.get("userId");
+        }
+      }
 
       return await this.Model.find(filters, options);
     }
