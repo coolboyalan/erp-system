@@ -251,6 +251,7 @@ class BaseModel extends Model {
         }
       : result;
   }
+
   static async findDocById(id, allowNull = false) {
     this.idChecker(id);
 
