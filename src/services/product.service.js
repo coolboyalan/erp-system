@@ -1,4 +1,5 @@
 import Product from "#models/product";
+import { session } from "#middlewares/requestSession";
 import BaseService from "#services/base";
 
 class ProductService extends BaseService {
@@ -32,6 +33,11 @@ class ProductService extends BaseService {
     }
 
     return await this.Model.findDocById(id);
+  }
+
+  static async deleteDoc(id) {
+    const doc = await this.Model.findDocById(id);
+    await doc.destroy({ force: true, transaction: session.get("transaction") });
   }
 }
 
