@@ -77,6 +77,62 @@ class ProductEntryService extends BaseService {
     await this.Model.bulkCreate(data);
   }
 
+  static async getPackingList(data) {
+    const { packingId } = data;
+
+    const lookups = [
+      {
+        from: "Bins",
+        as: "binData",
+        localField: "binId",
+        foreignField: "id",
+      },
+      {
+        from: "Products",
+        as: "productData",
+        localField: "productId",
+        foreignField: "id",
+      },
+      {
+        from: "Warehouses",
+        as: "warehouseData",
+        localField: "warehouseId",
+        foreignField: "id",
+        via: "binData",
+      },
+    ];
+
+    const fields = [
+      "barCode",
+      "id",
+      "productData.name AS productName",
+      "productData.code AS productCode",
+      "binData.name AS binName",
+      "warehouseData.name AS warehouseName",
+    ];
+
+    const options = { fields, lookups };
+
+    const entries = await this.get(
+      null,
+      {
+        packingId,
+        pagination: "false",
+      },
+      options,
+    );
+
+    if (!entry.length) {
+      throw new AppError({
+        status: false,
+        message: "Product not found",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    return entries;
+  }
+
   static async getWithBarCode(data) {
     const { barCode, warehouseId } = data;
 

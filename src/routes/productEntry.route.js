@@ -24,6 +24,14 @@ router
   );
 
 router
+  .route("/packing")
+  .get(
+    asyncHandler(
+      ProductEntryController.getPackingList.bind(ProductEntryController),
+    ),
+  );
+
+router
   .route("/:id?")
   .get(asyncHandler(ProductEntryController.get.bind(ProductEntryController)))
   .post(

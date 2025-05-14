@@ -6,6 +6,11 @@ import ProductEntryService from "#services/productEntry";
 class ProductEntryController extends BaseController {
   static Service = ProductEntryService;
 
+  static async getPackingList(req, res, next) {
+    const data = await this.Service.getPackingList(req.query);
+    sendResponse(httpStatus.OK, res, data);
+  }
+
   static async getWithBarCode(req, res, next) {
     const data = await this.Service.getWithBarCode(req.query);
     sendResponse(httpStatus.OK, res, data);
