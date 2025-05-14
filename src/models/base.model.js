@@ -141,7 +141,7 @@ class BaseModel extends Model {
       : "";
 
     // Sorting
-    const defaultOrder = [["createdAt", "DESC"]];
+    const defaultOrder = [["id", "DESC"]];
     const sortColumn =
       sortKey && attributes[sortKey]
         ? `"${tableName}"."${sortKey}"`
