@@ -31,6 +31,23 @@ class BinService extends BaseService {
     return data;
   }
 
+  static async getAll() {
+    const options = {
+      fields: ["id", "name", "warehouseData.name AS warehouseName"],
+      lookups: [
+        {
+          from: "Warehouses",
+          as: "warehouseData",
+          localField: "warehouseId",
+          foreignField: "id",
+        },
+      ],
+    };
+
+    const data = await this.Model.find({ pagination: "false" }, options);
+    return data;
+  }
+
   static async deleteDoc(id) {
     const bin = await this.Model.findDocById(id);
 

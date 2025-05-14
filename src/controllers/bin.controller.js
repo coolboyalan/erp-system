@@ -15,6 +15,11 @@ class BinController extends BaseController {
       `Bin ${bin.name} has been created successfully`,
     );
   }
+
+  static async getAll(req, res, next) {
+    const data = await this.Service.getAll();
+    sendResponse(httpStatus.OK, res, data);
+  }
 }
 
 export default BinController;

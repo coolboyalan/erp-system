@@ -64,8 +64,8 @@ ProductEntry.initialize(
       },
     },
     history: {
-      type: DataTypes.JSON,
-      defaultValue: null,
+      type: DataTypes.JSONB,
+      defaultValue: "[]",
       allowNull: false,
     },
   },

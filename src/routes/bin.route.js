@@ -8,6 +8,10 @@ const router = express.Router();
 // router.use(authentication);
 
 router
+  .route("/all")
+  .get(asyncHandler(BinController.getAll.bind(BinController)));
+
+router
   .route("/:id?")
   .get(asyncHandler(BinController.get.bind(BinController)))
   .post(asyncHandler(BinController.create.bind(BinController)))

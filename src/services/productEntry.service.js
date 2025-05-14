@@ -142,7 +142,6 @@ class ProductEntryService extends BaseService {
 
   static async getHistory(data) {
     const { barCode } = data;
-    console.log(data);
 
     const lookups = [
       {

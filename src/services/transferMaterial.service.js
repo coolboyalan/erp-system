@@ -18,11 +18,11 @@ class TransferMaterialService extends BaseService {
 
     const productEntries = [];
 
-    // Mark as internal if from == to
+    // Determine if the transfer is internal
     const internal = from === to;
     data.internal = internal;
 
-    // Collect the product entries for later bulk update
+    // Collect product entries for bulk update
     for (const entry of products) {
       const entries = await ProductEntry.findAll({
         where: {
@@ -54,10 +54,27 @@ class TransferMaterialService extends BaseService {
       if (updates.length > 0) {
         const updateSql = `
         UPDATE "ProductEntries"
-        SET "binId" = CASE
-          ${updates.map((u) => `WHEN id = ${u.id} THEN ${internal ? u.toBinId : "NULL::INTEGER"}`).join("\n")}
-        END
-        WHERE id IN (${updates.map((u) => u.id).join(", ")})
+        SET
+          "binId" = CASE
+            ${updates
+              .map(
+                (u) =>
+                  `WHEN id = ${u.id} THEN ${internal ? u.toBinId : "NULL::INTEGER"}`,
+              )
+              .join("\n")}
+          END,
+          "history" = CASE
+            ${updates
+              .map((u) => {
+                const historyEntry = JSON.stringify({
+                  fromId: u.fromBinId,
+                  toId: u.toBinId,
+                });
+                return `WHEN id = ${u.id} THEN COALESCE("history", '[]'::jsonb) || '${historyEntry}'::jsonb`;
+              })
+              .join("\n")}
+          END
+        WHERE id IN (${updates.map((u) => u.id).join(", ")});
       `;
         await ProductEntry.sequelize.query(updateSql, { transaction: t });
       }
@@ -71,7 +88,6 @@ class TransferMaterialService extends BaseService {
 
     return data;
   }
-
   static async get(id, filters, options = {}) {
     if (!id) {
       const fields = [
@@ -200,10 +216,24 @@ class TransferMaterialService extends BaseService {
     if (newProducts.length > 0) {
       const updateSql = `
         UPDATE "ProductEntries"
-        SET "binId" = CASE
-          ${newProducts.map((u) => `WHEN id = ${u.id} THEN ${u.toBinId}`).join("\n")}
-        END
-        WHERE id IN (${newProducts.map((u) => u.id).join(", ")})
+        SET
+          "binId" = CASE
+            ${newProducts
+              .map((u) => `WHEN id = ${u.id} THEN ${u.toBinId}`)
+              .join("\n")}
+          END,
+          "history" = CASE
+            ${newProducts
+              .map((u) => {
+                const historyEntry = JSON.stringify({
+                  fromId: u.fromBinId,
+                  toId: u.toBinId,
+                });
+                return `WHEN id = ${u.id} THEN COALESCE("history", '[]'::jsonb) || '${historyEntry}'::jsonb`;
+              })
+              .join("\n")}
+          END
+        WHERE id IN (${newProducts.map((u) => u.id).join(", ")});
       `;
 
       const transaction = session.get("transaction");
