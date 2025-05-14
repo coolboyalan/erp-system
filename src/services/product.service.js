@@ -20,7 +20,6 @@ class ProductService extends BaseService {
         "name",
         "categoryData.name AS categoryName",
         "code",
-        "sku",
         "rate",
         "id",
         "createdAt",

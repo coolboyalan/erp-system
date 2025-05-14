@@ -8,6 +8,9 @@ ProductCategory.initialize({
     type: DataTypes.STRING,
     allowNull: false,
     //WARN: Unique constraint missing
+    set(value) {
+      this.setDataValue("name", String(value).toUpperCase());
+    },
   },
   description: {
     type: DataTypes.TEXT,
@@ -16,6 +19,9 @@ ProductCategory.initialize({
     type: DataTypes.STRING,
     allowNull: false,
     //WARN: Unique constraint missing
+    set(value) {
+      this.setDataValue("hsnCode", String(value).toUpperCase());
+    },
   },
   gst: {
     type: DataTypes.INTEGER,

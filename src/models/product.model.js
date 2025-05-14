@@ -11,11 +11,18 @@ Product.initialize(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      set(value) {
+        this.setDataValue("name", String(value).toUpperCase());
+      },
     },
     code: {
       type: DataTypes.STRING,
       allowNull: false,
+      unqiue: true,
       // WARN: Unique constraint missing
+      set(value) {
+        this.setDataValue("code", String(value).toUpperCase());
+      },
     },
     type: {
       type: DataTypes.ENUM(Product.typeEnumArr),
@@ -23,11 +30,6 @@ Product.initialize(
     },
     description: {
       type: DataTypes.TEXT,
-    },
-    sku: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      // WARN: Unique constraint missing
     },
     productCategoryId: {
       type: DataTypes.INTEGER,
