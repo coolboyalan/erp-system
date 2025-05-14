@@ -65,7 +65,7 @@ ProductEntry.initialize(
     },
     history: {
       type: DataTypes.JSON,
-      defaultValue: "[]",
+      defaultValue: null,
       allowNull: false,
     },
   },

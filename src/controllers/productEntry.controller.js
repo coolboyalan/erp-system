@@ -10,6 +10,11 @@ class ProductEntryController extends BaseController {
     const data = await this.Service.getWithBarCode(req.query);
     sendResponse(httpStatus.OK, res, data);
   }
+
+  static async getHistory(req, res, next) {
+    const data = await this.Service.getHistory(req.query);
+    sendResponse(httpStatus.OK, res, data);
+  }
 }
 
 export default ProductEntryController;

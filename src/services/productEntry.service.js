@@ -3,7 +3,6 @@ import httpStatus from "http-status";
 import AppError from "#utils/appError";
 import BaseService from "#services/base";
 import PurchaseService from "#services/purchase";
-import BinService from "#services/bin";
 
 class ProductEntryService extends BaseService {
   static Model = ProductEntry;
@@ -137,6 +136,71 @@ class ProductEntryService extends BaseService {
         httpStatus: httpStatus.BAD_REQUEST,
       });
     }
+
+    return entry;
+  }
+
+  static async getHistory(data) {
+    const { barCode } = data;
+    console.log(data);
+
+    const lookups = [
+      {
+        from: "Bins",
+        as: "binData",
+        localField: "binId",
+        foreignField: "id",
+      },
+      {
+        from: "Products",
+        as: "productData",
+        localField: "productId",
+        foreignField: "id",
+      },
+      {
+        from: "Warehouses",
+        as: "warehouseData",
+        localField: "warehouseId",
+        foreignField: "id",
+        via: "binData",
+      },
+    ];
+
+    const fields = [
+      "barCode",
+      "id",
+      "binId",
+      "packed",
+      "history",
+      "markedForPacking",
+      "productData.name AS productName",
+      "productData.code AS productCode",
+      "productData.id AS productId",
+      "binData.name AS binName",
+      "binData.warehouseId AS warehouseId",
+      "warehouseData.name AS warehouseName",
+    ];
+
+    const options = { fields, lookups };
+
+    let entry = await this.get(
+      null,
+      {
+        barCode,
+        pagination: "false",
+      },
+      options,
+    );
+
+    if (!entry.length) {
+      throw new AppError({
+        status: false,
+        message: "Product not found",
+        httpStatus: httpStatus.BAD_REQUEST,
+      });
+    }
+
+    entry = entry[0];
 
     return entry;
   }

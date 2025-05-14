@@ -6,12 +6,20 @@ import { authentication } from "#middlewares/authentication";
 const router = express.Router();
 
 // router.use(authentication);
-//
+
 router
   .route("/barcode")
   .get(
     asyncHandler(
       ProductEntryController.getWithBarCode.bind(ProductEntryController),
+    ),
+  );
+
+router
+  .route("/history")
+  .get(
+    asyncHandler(
+      ProductEntryController.getHistory.bind(ProductEntryController),
     ),
   );
 
