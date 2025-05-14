@@ -122,7 +122,7 @@ class ProductEntryService extends BaseService {
       options,
     );
 
-    if (!entry.length) {
+    if (!entries.length) {
       throw new AppError({
         status: false,
         message: "Product not found",
