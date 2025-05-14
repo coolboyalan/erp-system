@@ -23,6 +23,7 @@ class ProductService extends BaseService {
         "rate",
         "id",
         "createdAt",
+        "categoryData.gst AS gst",
       ];
 
       options.fields = fields;
