@@ -95,6 +95,7 @@ class PackingService extends BaseService {
         },
         packed: false,
         markedForPacking: false,
+        purchaseReturnId: null,
       },
     });
 
@@ -213,6 +214,7 @@ class PackingService extends BaseService {
         AND "quotationId" IS NULL
         AND "packed" = FALSE
         AND "markedForPacking" = FALSE
+		AND "purchaseReturnId" IS NULL
         AND "Warehouses"."id" = :warehouseId
     ) sub
     WHERE row_num <= :maxLimit
@@ -262,6 +264,11 @@ class PackingService extends BaseService {
     }
 
     packing.packed = true;
+
+    await ProductEntryService.Model.update(
+      { packed: true, markedForPacking: true },
+      { where: { packingId: id }, transaction: session.get("transaction") },
+    );
 
     const quotation = await QuotationService.getDocById(packing.quotationId);
 

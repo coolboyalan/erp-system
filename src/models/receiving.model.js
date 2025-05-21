@@ -41,7 +41,7 @@ Receiving.initialize({
   },
   referenceNo: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   amount: {
     type: DataTypes.DECIMAL(10, 2),

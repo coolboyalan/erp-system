@@ -26,6 +26,7 @@ class QuotationController extends BaseController {
       "ledgerData.companyName AS ledgerName",
       "leadData.name as leadName",
       "userData.name as userName",
+      "userData.phone as phone",
       "quotationDate",
       "status",
       "netAmount",

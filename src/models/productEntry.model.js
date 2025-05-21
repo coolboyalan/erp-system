@@ -1,10 +1,11 @@
 import Bin from "#models/bin";
 import BaseModel from "#models/base";
 import Packing from "#models/packing";
-import { DataTypes } from "sequelize";
 import Product from "#models/product";
 import Purchase from "#models/purchase";
 import Quotation from "#models/quotation";
+import { DataTypes, INTEGER } from "sequelize";
+import PurchaseReturn from "#models/purchaseReturn";
 
 class ProductEntry extends BaseModel {}
 
@@ -13,7 +14,6 @@ ProductEntry.initialize(
     barCode: {
       type: DataTypes.STRING,
       allowNull: false,
-      //WARN: Unique constraint missing
     },
     productId: {
       type: DataTypes.INTEGER,
@@ -67,6 +67,14 @@ ProductEntry.initialize(
       type: DataTypes.JSONB,
       defaultValue: "[]",
       allowNull: false,
+    },
+    purchaseReturnId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: PurchaseReturn,
+        key: PurchaseReturn.primaryKeyAttribute,
+      },
     },
   },
   {
