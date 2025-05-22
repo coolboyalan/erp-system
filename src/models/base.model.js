@@ -101,13 +101,13 @@ class BaseModel extends Model {
         if (filters.startDate) {
           whereClauses.push(`"${tableName}"."createdAt" >= :startDate`);
           replacements.startDate = filters.startDate;
-          delete filters.startDate;
+          delete restFilters.startDate;
         }
 
         if (filters.endDate) {
           whereClauses.push(`"${tableName}"."createdAt" <= :endDate`);
           replacements.endDate = filters.endDate;
-          delete filters.endDate;
+          delete restFilters.endDate;
         }
 
         return;
