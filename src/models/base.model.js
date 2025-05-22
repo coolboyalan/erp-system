@@ -139,10 +139,12 @@ class BaseModel extends Model {
     }
 
     // Search key validation
+
     if (search && searchKey) {
+      const attribute = attributes[searchKey];
+
       if (searchKey === "id") {
-        search = parseInt(search);
-      } else if (!attributes[searchKey] || !attributes[searchKey].searchable) {
+      } else if (!attribute || !attribute.searchable) {
         throw new AppError({
           status: false,
           message: `Field "${searchKey}" is not searchable`,
@@ -151,7 +153,21 @@ class BaseModel extends Model {
       }
 
       const paramKey = `search_0`;
-      whereClauses.push(`"${tableName}"."${searchKey}" ILIKE :${paramKey}`);
+
+      // Check if the attribute type is INTEGER and cast to TEXT if so
+      const isIntegerType =
+        attribute.type &&
+        typeof attribute.type.toString === "function" &&
+        attribute.type.toString().toUpperCase().includes("INTEGER");
+
+      if (isIntegerType) {
+        whereClauses.push(
+          `CAST("${tableName}"."${searchKey}" AS TEXT) ILIKE :${paramKey}`,
+        );
+      } else {
+        whereClauses.push(`"${tableName}"."${searchKey}" ILIKE :${paramKey}`);
+      }
+
       replacements[paramKey] = `%${search}%`;
     }
 
