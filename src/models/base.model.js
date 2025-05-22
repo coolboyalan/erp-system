@@ -62,7 +62,7 @@ class BaseModel extends Model {
   }
 
   static async find(filters, options = {}) {
-    const {
+    let {
       search = "",
       searchKey = "",
       page = 1,
@@ -140,7 +140,9 @@ class BaseModel extends Model {
 
     // Search key validation
     if (search && searchKey) {
-      if (!attributes[searchKey] || !attributes[searchKey].searchable) {
+      if (searchKey === "id") {
+        searchKey = parseInt(searchKey);
+      } else if (!attributes[searchKey] || !attributes[searchKey].searchable) {
         throw new AppError({
           status: false,
           message: `Field "${searchKey}" is not searchable`,
