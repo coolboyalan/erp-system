@@ -1,10 +1,10 @@
 import Bin from "#models/bin";
 import BaseModel from "#models/base";
+import { DataTypes } from "sequelize";
 import Packing from "#models/packing";
 import Product from "#models/product";
 import Purchase from "#models/purchase";
 import Quotation from "#models/quotation";
-import { DataTypes, INTEGER } from "sequelize";
 import PurchaseReturn from "#models/purchaseReturn";
 
 class ProductEntry extends BaseModel {}
@@ -67,6 +67,9 @@ ProductEntry.initialize(
       type: DataTypes.JSONB,
       defaultValue: "[]",
       allowNull: false,
+    },
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
     },
     purchaseReturnId: {
       type: DataTypes.INTEGER,

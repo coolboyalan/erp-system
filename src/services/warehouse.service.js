@@ -44,6 +44,24 @@ class WarehouseService extends BaseService {
 
     return await this.Model.findDocById(id);
   }
+
+  static async getTotalValue(warehouseId) {
+    await this.getDocById(warehouseId);
+
+    const total = await ProductEntry.sum("price", {
+      include: [
+        {
+          model: Bin,
+          required: true,
+          where: {
+            warehouseId,
+          },
+        },
+      ],
+    });
+
+    return total;
+  }
 }
 
 export default WarehouseService;
