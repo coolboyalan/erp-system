@@ -110,6 +110,8 @@ class BaseModel extends Model {
 
         delete filters.startDate;
         delete filters.endDate;
+
+        return;
       }
 
       if (key !== "id" && (!attributes[key] || !attributes[key].filterable)) {
