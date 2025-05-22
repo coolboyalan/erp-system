@@ -141,7 +141,7 @@ class BaseModel extends Model {
     // Search key validation
     if (search && searchKey) {
       if (searchKey === "id") {
-        searchKey = parseInt(searchKey);
+        search = parseInt(search);
       } else if (!attributes[searchKey] || !attributes[searchKey].searchable) {
         throw new AppError({
           status: false,
