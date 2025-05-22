@@ -96,6 +96,22 @@ class BaseModel extends Model {
       )
         return;
 
+      // Date range filter based on createdAt
+      if (filters.startDate || filters.endDate) {
+        if (filters.startDate) {
+          whereClauses.push(`"${tableName}"."createdAt" >= :startDate`);
+          replacements.startDate = filters.startDate;
+        }
+
+        if (filters.endDate) {
+          whereClauses.push(`"${tableName}"."createdAt" <= :endDate`);
+          replacements.endDate = filters.endDate;
+        }
+
+        delete filters.startDate;
+        delete filters.endDate;
+      }
+
       if (key !== "id" && (!attributes[key] || !attributes[key].filterable)) {
         throw new AppError({
           status: false,
