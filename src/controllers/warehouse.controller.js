@@ -1,6 +1,7 @@
 import WarehouseService from "#services/warehouse";
 import BaseController from "#controllers/base";
 import { sendResponse } from "#utils/response";
+import httpStatus from "http-status";
 
 class WarehouseController extends BaseController {
   static Service = WarehouseService;

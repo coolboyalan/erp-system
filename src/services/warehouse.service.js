@@ -1,5 +1,7 @@
-import Warehouse from "#models/warehouse";
 import BaseService from "#services/base";
+import Warehouse from "#models/warehouse";
+import sequelize from "#configs/database";
+import httpStatus from "http-status";
 
 class WarehouseService extends BaseService {
   static Model = Warehouse;
@@ -48,19 +50,19 @@ class WarehouseService extends BaseService {
   static async getTotalValue(warehouseId) {
     await this.getDocById(warehouseId);
 
-    const total = await ProductEntry.sum("price", {
-      include: [
-        {
-          model: Bin,
-          required: true,
-          where: {
-            warehouseId,
-          },
-        },
-      ],
-    });
-
-    return total;
+    const [result] = await sequelize.query(
+      `
+  SELECT SUM("ProductEntry"."price") as total, COUNT(*) as quantity
+  FROM "ProductEntries" AS "ProductEntry"
+  INNER JOIN "Bins" AS "Bin" ON "ProductEntry"."binId" = "Bin"."id"
+  WHERE "Bin"."warehouseId" = :warehouseId AND "ProductEntry"."deletedAt" IS NULL AND "Bin"."deletedAt" IS NULL AND "packed" = FALSE AND "purchaseReturnId" IS NULL AND "markedForPacking" = FALSE
+`,
+      {
+        replacements: { warehouseId }, // or pass it dynamically
+        type: sequelize.QueryTypes.SELECT,
+      },
+    );
+    return { total: result.total, quantity: result.quantity };
   }
 }
 

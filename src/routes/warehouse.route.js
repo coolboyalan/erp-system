@@ -9,7 +9,7 @@ router.use(authentication);
 
 router
   .route("/total")
-  .get(asyncHandler(WarehouseController.get.bind(WarehouseController)));
+  .get(asyncHandler(WarehouseController.getTotal.bind(WarehouseController)));
 
 router
   .route("/:id?")
