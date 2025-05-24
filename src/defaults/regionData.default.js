@@ -1445,22 +1445,16 @@ const region = {
       let existingRole = await Role.findOne({ where: { name: "ADMIN" } });
 
       if (!existingRole) {
-        existingRole = await Role.create(
-          { name: "ADMIN", permissions },
-          { transaction },
-        );
+        existingRole = await Role.create({ name: "ADMIN", permissions });
       }
 
-      await User.create(
-        {
-          name: "admin",
-          email: "johndoe@example.com",
-          password: "password",
-          phone: "1234567890",
-          roleId: existingRole.id,
-        },
-        { transaction },
-      );
+      await User.create({
+        name: "admin",
+        email: "johndoe@example.com",
+        password: "password",
+        phone: "1234567890",
+        roleId: existingRole.id,
+      });
 
       await transaction.commit();
     } catch (err) {

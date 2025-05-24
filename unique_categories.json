@@ -1,0 +1,104 @@
+[
+  {
+    "sno": 1,
+    "category": "Slider",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 23,
+    "category": "Rider",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 28,
+    "category": "Rocker",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 33,
+    "category": "Essentials",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 52,
+    "category": "Toys",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 54,
+    "category": "Gym",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 67,
+    "category": "Soft cube",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 73,
+    "category": "Shelf",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 78,
+    "category": "Organizer",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 79,
+    "category": "Classroom Essentials",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 85,
+    "category": "Trampoline",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 97,
+    "category": "Mat",
+    "hsn": 95030030,
+    "gst": 18
+  },
+  {
+    "sno": 105,
+    "category": "wall toys",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 118,
+    "category": "Musical Equipment",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 134,
+    "category": "Kids Play Tunnel",
+    "hsn": 95030030,
+    "gst": 12
+  },
+  {
+    "sno": 140,
+    "category": "Furniture",
+    "hsn": 94031010,
+    "gst": 18
+  },
+  {
+    "sno": 241,
+    "category": "Montessori",
+    "hsn": 95030010,
+    "gst": 0.12
+  }
+]

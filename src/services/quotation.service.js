@@ -13,7 +13,7 @@ class QuotationService extends BaseService {
   static Model = Quotation;
 
   static async create(data) {
-    data.userId = session.get("userId");
+    data.userId = data.userId ?? session.get("userId");
     const quotation = await super.create(data);
     const user = await UserService.getDocById(data.userId);
 
