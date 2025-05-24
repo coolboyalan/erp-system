@@ -1,10 +1,11 @@
+import Role from "#models/role";
 import env from "#configs/env";
 import City from "#models/city";
+import User from "#models/admin";
 import State from "#models/state";
 import Country from "#models/country";
 import sequelize from "#configs/database";
 import { session } from "#middlewares/requestSession";
-import User from "#models/admin";
 
 const region = {
   "Andaman and Nicobar Islands": ["Port Blair"],
@@ -1440,14 +1441,27 @@ const region = {
         },
       ];
 
-      const createdUser = await User.create({
-        name: "admin",
-        email: "johndoe@example.com",
-        password: "password",
-        permissions,
-      });
-
       const transaction = session.get("transaction");
+      let existingRole = await Role.findOne({ where: { name: "ADMIN" } });
+
+      if (!existingRole) {
+        existingRole = await Role.create(
+          { name: "ADMIN", permissions },
+          { transaction },
+        );
+      }
+
+      await User.create(
+        {
+          name: "admin",
+          email: "johndoe@example.com",
+          password: "password",
+          phone: "1234567890",
+          roleId: existingRole.id,
+        },
+        { transaction },
+      );
+
       await transaction.commit();
     } catch (err) {
       console.log(err);
